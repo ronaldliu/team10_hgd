@@ -5,12 +5,13 @@ public class MovementController : MonoBehaviour {
 
 	// For movement control
 	public float maxSpeed = 10f;
-	public float jumpForce = 700f;
+	public float jumpForce = 1000f;
 	bool facingRight = true;
 
 	// References
 	Animator anim; // This is currently not used because I do not have animations yet
 	Rigidbody2D rBody;
+	ShootController shootController;
 
 	// For Ground collision
 	bool onGround = false;
@@ -22,6 +23,7 @@ public class MovementController : MonoBehaviour {
 	void Start () {
 		anim = GetComponent<Animator> ();
 		rBody = GetComponent<Rigidbody2D> ();
+		shootController = GetComponent<ShootController> ();
 	}
 	
 	// Update is called once per frame
@@ -30,6 +32,11 @@ public class MovementController : MonoBehaviour {
 			rBody.AddForce (new Vector2 (0f, jumpForce));
 			onGround = false;
 		}
+		// Shooting
+		if (Input.GetAxis ("TriggersR_1") < 0) {
+			shootController.Fire ();
+		}
+
 		if (Input.GetKey("a"))
 			transform.Translate(-Vector3.right * maxSpeed * Time.deltaTime);
 		if (Input.GetKey("d"))
@@ -57,5 +64,13 @@ public class MovementController : MonoBehaviour {
 		Vector3 theScale = transform.localScale;
 		theScale.x *= -1;
 		transform.localScale = theScale;
+	}
+
+	// Getters and Setters
+	public int getDirectionFacing () {
+		if (facingRight)
+			return 1;
+		else
+			return -1;
 	}
 }
