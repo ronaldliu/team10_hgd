@@ -27,6 +27,7 @@ public class ShootController : MonoBehaviour {
 		if (ammo > 0) {
 			if (Time.time > nextFire) {
 				nextFire = Time.time + 1 / fireRate;
+				ammo--;
 				if (!shotObject)
 					shootRay ();
 				else
