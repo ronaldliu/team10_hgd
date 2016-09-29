@@ -8,6 +8,7 @@ public class SentryController : WeaponController {
 	private Quaternion lookRotation;
 	private Vector3 direction;
 	public GameObject bulletTrailPrefab;
+	public float health;
 	int i = 10;
 
 	public override void Fire() {
@@ -69,9 +70,19 @@ public class SentryController : WeaponController {
 		
 	void playerCheck(){
 		RaycastHit2D hit = Physics2D.Raycast(firePoint.position, firePoint.right, 100, canBeShot);
-		if (LayerMask.LayerToName (hit.transform.gameObject.layer) == "Character") {
-			Fire ();
+		if (hit) {
+			string hitLayer = LayerMask.LayerToName (hit.transform.gameObject.layer);
+			if (hitLayer != null && hitLayer == "Character") {
+				Fire ();
+			}
 		}
+	}
+
+	public void applyDamage(float damage)
+	{
+		health -= damage;
+		if (health <= 0)
+			Destroy (gameObject);
 	}
 
 }

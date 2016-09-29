@@ -34,7 +34,7 @@ public class Pistol : WeaponController {
 			if (LayerMask.LayerToName (hit.transform.gameObject.layer) == "Platforms") {
 				// Do things to the enemy
 			} else if (LayerMask.LayerToName (hit.transform.gameObject.layer) == "Enemies") {
-				
+				hit.transform.gameObject.GetComponent<SentryController> ().applyDamage (10);
 			}
 		} else {
 			generateTrail ();

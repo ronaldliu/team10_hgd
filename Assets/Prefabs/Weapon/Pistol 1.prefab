@@ -83,12 +83,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   variance: 10
   ammo: 70
-  shotObject: {fileID: 0}
+  shotObject: {fileID: 114000013439039010, guid: 1b1b37ed8bf068c439143b76730f00da,
+    type: 2}
   fireRate: 30
   canBeShot:
     serializedVersion: 2
     m_Bits: 768
-  projSpeed: 0
+  projSpeed: 50
   firePoint: {fileID: 4000010334565914}
   bulletTrailPrefab: {fileID: 1000012711377922, guid: 40a60c3cb2dfd204aa4d03f4dd276d97,
     type: 2}

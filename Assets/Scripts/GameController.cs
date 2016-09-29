@@ -53,5 +53,8 @@ public class GameController : MonoBehaviour {
 	public void updateHealth () {
 		float playerHealth = player.currentHealth / player.startingHealth;
 		healthBar.localScale = new Vector2 (Mathf.Clamp(playerHealth, 0F, 1F), healthBar.localScale.y);
+
+		if (player.currentHealth == 0)
+			Application.LoadLevel(Application.loadedLevel);
 	}
 }
