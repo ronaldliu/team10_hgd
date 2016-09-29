@@ -113,12 +113,17 @@ public class TileMapController : MonoBehaviour {
 		LeanPool.Despawn(_tileContainer);
 		_tileContainer = LeanPool.Spawn (tileContainerPrefab);
 
+		// Offset the map so that the map is generated and centered on the map
+		//  at (0, 0)
+		int offSetX = mapSize.x / 2;
+		int offSetY = mapSize.y / 2;
+
 		for (float y = 0; y < mapSize.y; y++) {
 			for (float x = 0; x < mapSize.x; x++) {
 				if (_map [(int)x, (int)y] == null)
 					continue;
 				GameObject t = LeanPool.Spawn (tilePrefab);
-				t.transform.position = new Vector3 (x, y, -8);
+				t.transform.position = new Vector3 (x - offSetX, y - offSetY, -8);
 				t.transform.SetParent (_tileContainer.transform);
 				SpriteRenderer renderer = t.GetComponent<SpriteRenderer> ();
 				renderer.sprite = _map [(int)x , (int)y].tImage;
@@ -176,9 +181,11 @@ public class TileMapController : MonoBehaviour {
 		// float height = 2f * cam.orthographicSize;
 		// float width = height * cam.aspect;
 
-		_map = new TileSprite[(int) mapSize.x, (int) mapSize.y];
+		JsonData map = generateJsonObject ("hello_hgd.json");
+		mapSize.x = map["width"];
+		mapSize.y = map["height"];
 
-		JsonData map = generateJsonObject ("test_2.json");
+		_map = new TileSprite[(int) mapSize.x, (int) mapSize.y];
 
 		setTiles (map);
 		addTilesToWorld ();
