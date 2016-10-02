@@ -84,7 +84,7 @@ MonoBehaviour:
   variance: 10
   ammo: 68
   shotObject: {fileID: 0}
-  fireRate: 3
+  fireRate: 5
   canBeShot:
     serializedVersion: 2
     m_Bits: 768

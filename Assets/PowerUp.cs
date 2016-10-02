@@ -13,7 +13,7 @@ public class PowerUp : MonoBehaviour {
 		renderer.sprite = attachedWeapon.GetComponent<SpriteRenderer> ().sprite;
 	}
 
-	void OnCollisionEnter2D(Collision2D col) 
+	void OnTriggerEnter2D(Collider2D col) 
 	{
 		if (col.gameObject.tag == "Player")
 			playerCont = col.gameObject.GetComponent<PlayerController> ();

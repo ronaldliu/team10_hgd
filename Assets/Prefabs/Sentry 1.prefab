@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 4000010286150456}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: firePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,9 +37,9 @@ GameObject:
   - 212: {fileID: 212000010103140346}
   - 61: {fileID: 61000010320727374}
   - 114: {fileID: 114000012174516342}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sentry 1
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64,7 +64,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000011869041426}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.44, y: 10.3, z: -9}
+  m_LocalPosition: {x: 33.8, y: 20.6, z: -9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -100,16 +100,17 @@ MonoBehaviour:
   ammo: 30
   shotObject: {fileID: 114000013439039010, guid: 1b1b37ed8bf068c439143b76730f00da,
     type: 2}
-  fireRate: 2
+  fireRate: 10
   canBeShot:
     serializedVersion: 2
     m_Bits: 2304
-  projSpeed: 10
+  projSpeed: 50
   firePoint: {fileID: 4000010286150456}
   Target: {fileID: 0}
-  RotateSpeed: 5
+  RotateSpeed: 1
   bulletTrailPrefab: {fileID: 1000012711377922, guid: 40a60c3cb2dfd204aa4d03f4dd276d97,
     type: 2}
+  health: 100
 --- !u!212 &212000010103140346
 SpriteRenderer:
   m_ObjectHideFlags: 1
