@@ -42,7 +42,7 @@ public class TileMapController : MonoBehaviour {
 	public Sprite defaultImage;
 	public GameObject tileContainerPrefab;
 	public GameObject tilePrefab;
-	public GameObject toFollow;
+	// public GameObject toFollow;
 
 	private Vector2 currentPosition;
 	private TileSprite[,] _map;
@@ -113,60 +113,75 @@ public class TileMapController : MonoBehaviour {
 		LeanPool.Despawn(_tileContainer);
 		_tileContainer = LeanPool.Spawn (tileContainerPrefab);
 
+		// Offset the map so that the map is generated and centered on the map
+		//  at (0, 0)
+		int offSetX = (int) mapSize.x / 2;
+		int offSetY = (int) mapSize.y / 2;
+
 		for (float y = 0; y < mapSize.y; y++) {
 			for (float x = 0; x < mapSize.x; x++) {
 				if (_map [(int)x, (int)y] == null)
 					continue;
 				GameObject t = LeanPool.Spawn (tilePrefab);
-				t.transform.position = new Vector3 (x, y, -8);
+				t.transform.position = new Vector3 (x - offSetX, y - offSetY, -8);
 				t.transform.SetParent (_tileContainer.transform);
 				SpriteRenderer renderer = t.GetComponent<SpriteRenderer> ();
 				renderer.sprite = _map [(int)x , (int)y].tImage;
 				_tiles.Add (t);
 			}
 		}
+	}
 
-		// If you want to procedurally generate the tilemap as the character moves
-		// Kind of weird and doesnt seem smooth
-		// So taking it out for now... Maybe we might need in the future?
+	// Checks to see if the current tile in the tilemap is an edge tile
+	private bool isEdgeTile(int x, int y)
+	{
+		if (_map [x, y] == null)
+			return false;
 		/*
-		foreach (GameObject o in _tiles) {
-			LeanPool.Despawn (o);
-		}
-		_tiles.Clear ();
-		LeanPool.Despawn(_tileContainer);
-		_tileContainer = LeanPool.Spawn (tileContainerPrefab);
-		float tileSize = 0.64F;
-		float viewOffsetX = viewPortSize.x / 2F;
-		float viewOffsetY = viewPortSize.y / 2F;
-		
-		for (float y = -viewOffsetY; y < viewOffsetY; y++) {
-			for (float x = -viewOffsetX; x < viewOffsetX; x++) {
-				float tX = x+tileSize;
-				float tY = y+tileSize;
+		0 0 0 0 0 0 0 0
+		0 1 1 1 1 1 1 0
+		0 1 1 0 0 1 1 0
+		1 1 1 0 0 1 1 1 
+		*/
+		// PolygonCollider2D setPath(index, point = vector2) pathCount()
 
-				float iX = x + currentPosition.x;
-				float iY = y + currentPosition.y;
+		int startX 	= (x - 1 < 0) ? x : x - 1;
+		int startY 	= (y - 1 < 0) ? y : y - 1;
+		int endX 	= (x + 1 > mapSize.x - 1) ? x : x + 1;
+		int endY 	= (y + 1 > mapSize.y - 1) ? y : y + 1;
 
-				// Make sure that we do not go out of bounds
-				if (iX < 0)
-					continue;
-				if (iY < 0)
-					continue;
-				if (iX > mapSize.x - 2)
-					continue;
-				if (iY > mapSize.y - 2)
-					continue;
-				
-				GameObject t = LeanPool.Spawn (tilePrefab);
-				t.transform.position = new Vector3 (tX, tY, -8);
-				t.transform.SetParent (_tileContainer.transform);
-				SpriteRenderer renderer = t.GetComponent<SpriteRenderer> ();
-				renderer.sprite = _map [(int)x + (int)currentPosition.x, (int)y + (int)currentPosition.y].tImage;
-				_tiles.Add (t);
+		for (int cRow = startX; cRow <= endX; cRow++)
+		{
+			for (int cCol = startY; cCol <= endY; cCol++)
+			{
+				if ( (_map[cRow, cCol] == null) && !(cRow == x && cCol == y))
+					return true;
 			}
 		}
-		*/
+		return false;
+	}
+
+	private void createCollider() 
+	{
+		int[,] edgeTiles = new int[(int) mapSize.x, (int) mapSize.y];
+		string toPrint = "";
+		for (int y = 0; y < mapSize.y; y++) {
+			for (int x = 0; x < mapSize.x; x++) {
+				if (isEdgeTile (x, y)) {
+					toPrint += "1";
+					// while loopy loop
+					/*
+					Collider col = LeanPool.Spawn(collider);
+					col.transform.SetParent (_colliderContainer.transform);
+					_colliders.Add(col);
+					*/
+				} else {
+					toPrint += "0";
+				}
+			}
+			toPrint += "\n";
+		}
+		print (toPrint);
 	}
 
 	public void Start()
@@ -176,9 +191,11 @@ public class TileMapController : MonoBehaviour {
 		// float height = 2f * cam.orthographicSize;
 		// float width = height * cam.aspect;
 
-		_map = new TileSprite[(int) mapSize.x, (int) mapSize.y];
+		JsonData map = generateJsonObject ("hello_hgd.json");
+		mapSize.x = (float) map["width"];
+		mapSize.y = (float) map["height"];
 
-		JsonData map = generateJsonObject ("test_2.json");
+		_map = new TileSprite[(int) mapSize.x, (int) mapSize.y];
 
 		setTiles (map);
 		addTilesToWorld ();

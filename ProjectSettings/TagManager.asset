@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Spike
   - LaserBeam
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - Enemies
   - Interactable
   - Character
-  - 
+  - Tiles
   - 
   - 
   - 
