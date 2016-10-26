@@ -8,6 +8,7 @@ TagManager:
   - LaserBeam
   - New Tag
   - PowerUp
+  - Saw
   layers:
   - Default
   - TransparentFX

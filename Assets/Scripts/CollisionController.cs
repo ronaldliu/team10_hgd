@@ -26,6 +26,9 @@ public class CollisionController : MonoBehaviour {
 		case "Spike":
 			player.applyDamage (1f);
 			break;
+		case "Saw":
+			player.applyDamage (1f);
+			break;
 		}
 	}
 }

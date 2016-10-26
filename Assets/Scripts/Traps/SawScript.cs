@@ -17,6 +17,6 @@ public class SawScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D other){
-		print("this is working");
+		//print("this is working");
 	}
 }
