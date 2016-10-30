@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SawScript : MonoBehaviour {
 	
-	public float turnSpeed = 5f;
+	public int turnSpeed = 2;
 	private GameObject saw_sprite;
 
 	void Start()
@@ -13,7 +13,7 @@ public class SawScript : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		saw_sprite.transform.Rotate (Vector3.forward  * turnSpeed);
+		saw_sprite.transform.Rotate (-Vector3.forward, 14 * Time.deltaTime * turnSpeed);
 	}
 
 	void OnTriggerEnter2D(Collider2D other){

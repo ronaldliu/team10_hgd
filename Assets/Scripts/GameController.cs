@@ -123,7 +123,7 @@ public class GameController : MonoBehaviour {
 			timerText.text = (int)((timer + 1) / 60) + ":" + (int)(((timer + 1) % 60) / 10) + (int)(((timer + 1) % 60) % 10);
 
 			roundText.text = "Round: " + round;
-			ammoText.text = player.currentWeapon.ammo.ToString();
+			// ammoText.text = player.currentWeapon.ammo.ToString();
 
 			if (player.powerUpTimer > 0) {
 				player.powerUpTimer = player.powerUpTimer - Time.deltaTime;
