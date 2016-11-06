@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
@@ -19,8 +20,8 @@ public class GameController : MonoBehaviour {
 
 	private float width;
 	private float startMaxXPos;
-	private string[] phaseSwitchMessages = { "Time's Up!", "Get Ready...", "3", "2", "1", "Go!" };
-	private float[] phaseSwitchTimes = { 1f, 2f, 0.5f, 0.5f, 0.5f, 0.5f };
+	public string[] phaseSwitchMessages = { "Time's Up!", "Get Ready...", "3", "2", "1", "Go!" };
+	public float[] phaseSwitchTimes = { 1f, 2f, 0.5f, 0.5f, 0.5f, 0.5f };
 	private int phaseSwitchState = 0;
 
 	public CreatorController creatorPrefab;
@@ -32,6 +33,7 @@ public class GameController : MonoBehaviour {
 	void Start () {
 		state = 0;
 		round = 1;
+		timer = 10f;
 		camera = GameObject.Find("Main Camera").GetComponent<DynamicCamera>();
 		generateMap ();
 	}
@@ -40,9 +42,15 @@ public class GameController : MonoBehaviour {
 		switch (state) {
 		case 0: //Creator
 			{
+				// JESSE ATTENTION!!!: THIS IS HOW WE ARE UPDATING THE UI SINCE THEY ARE SEPARATE NOW.
+				//	IF THIS IS AS TERRIBLE AS I AM BEGINNING TO THINK MAYBE CHANGE PLZ.
+				Text timeText;
+				timeText = (int)((timer + 1) / 60) + ":" + (int)(((timer + 1) % 60) / 10) + (int)(((timer + 1) % 60) % 10);
 				if (!creator) {
 					createCreator ();
 				}
+				creator.ui.updateTimers (timeText);
+
 				if (timer <= 0) {
 					DestroyObject (creator.gameObject);
 					timer = phaseSwitchTimes[0];

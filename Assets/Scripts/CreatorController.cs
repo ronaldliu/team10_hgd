@@ -13,6 +13,7 @@ public class CreatorController : MonoBehaviour {
 	public Vector3 snappedEdgePos;
 	public int snappedEdgeSide;
 
+	public CreatorHud ui;
 
 	// Use this for initialization
 	void Start () {
