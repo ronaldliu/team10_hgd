@@ -63,7 +63,8 @@ public class GameController : MonoBehaviour {
 				if (timer <= 0) {
 					phaseSwitchState++;
 					if (phaseSwitchState >= phaseSwitchMessages.Length) {
-						createPlayer ();
+						if (!player)
+							createPlayer ();
 						timer = 120.0F;
 						state = 2;
 					} else {
