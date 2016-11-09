@@ -16,7 +16,7 @@ public class CreatorHud : MonoBehaviour {
 		eraseAllText ();
 	}
 
-	public void updateTimers(Text timeFromGame) {
+	public void updateTimers(string timeFromGame) {
 		timerText.text = timeFromGame;
 	}
 
