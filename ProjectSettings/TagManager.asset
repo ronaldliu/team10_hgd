@@ -11,6 +11,8 @@ TagManager:
   - PowerUp
   - Saw
   - Cube
+  - Lava
+  - Slime
   layers:
   - Default
   - TransparentFX

@@ -32,6 +32,17 @@ public class CollisionController : MonoBehaviour {
 		case "Spike":
 			player.applyDamage (1f);
 			break;
+		case "Lava":
+			player.applyDamage (1f);
+			break;
+		case "Slime":
+			player.jumpForce = 600f;
+			break;
 		}
+	}
+
+	void OnTriggerExit2D(Collider2D col)
+	{
+		player.resetAttributesToDefault ();
 	}
 }
