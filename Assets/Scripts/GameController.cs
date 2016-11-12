@@ -29,12 +29,14 @@ public class GameController : MonoBehaviour {
 	private CreatorController creator;
 	private PlayerController player;
 	private DynamicCamera camera;
+	private Text timeText;
 
 	void Start () {
 		state = 0;
 		round = 1;
 		timer = 10f;
 		camera = GameObject.Find("Main Camera").GetComponent<DynamicCamera>();
+		creator = GameObject.Find ("Creator").GetComponent<CreatorController> ();
 		generateMap ();
 	}
 
@@ -44,15 +46,19 @@ public class GameController : MonoBehaviour {
 			{
 				// JESSE ATTENTION!!!: THIS IS HOW WE ARE UPDATING THE UI SINCE THEY ARE SEPARATE NOW.
 				//	IF THIS IS AS TERRIBLE AS I AM BEGINNING TO THINK MAYBE CHANGE PLZ.
-				Text timeText;
-				timeText = (int)((timer + 1) / 60) + ":" + (int)(((timer + 1) % 60) / 10) + (int)(((timer + 1) % 60) % 10);
 				if (!creator) {
 					createCreator ();
 				}
-				creator.ui.updateTimers (timeText);
+				creator.gameObject.SetActive (true);
+				string time =     (int)((timer + 1) / 60) + ":" 
+								+ (int)(((timer + 1) % 60) / 10) 
+								+ (int)(((timer + 1) % 60) % 10);
+
+				creator.ui.updateTimers (time);
 
 				if (timer <= 0) {
 					DestroyObject (creator.gameObject);
+					creator.gameObject.SetActive (false);
 					timer = phaseSwitchTimes[0];
 					state = 1;
 				}
@@ -63,7 +69,8 @@ public class GameController : MonoBehaviour {
 				if (timer <= 0) {
 					phaseSwitchState++;
 					if (phaseSwitchState >= phaseSwitchMessages.Length) {
-						createPlayer ();
+						if (!creator)
+							createPlayer ();
 						timer = 120.0F;
 						state = 2;
 					} else {
