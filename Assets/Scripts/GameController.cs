@@ -36,6 +36,7 @@ public class GameController : MonoBehaviour {
 		round = 1;
 		timer = 10f;
 		camera = GameObject.Find("Main Camera").GetComponent<DynamicCamera>();
+		creator = GameObject.Find ("Creator").GetComponent<CreatorController> ();
 		generateMap ();
 	}
 
@@ -52,6 +53,7 @@ public class GameController : MonoBehaviour {
 				string time =     (int)((timer + 1) / 60) + ":" 
 								+ (int)(((timer + 1) % 60) / 10) 
 								+ (int)(((timer + 1) % 60) % 10);
+
 				creator.ui.updateTimers (time);
 
 				if (timer <= 0) {
