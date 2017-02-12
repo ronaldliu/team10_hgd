@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-public class GameController : MonoBehaviour
+public class GC2 : MonoBehaviour
 {
 
 	private float countdownTimer;
@@ -25,6 +25,7 @@ public class GameController : MonoBehaviour
 	private int round;
 	private bool ranTwice;
 	private bool playerReachedEnd;
+	private bool roundStarted;
 
 	private float width;
 	private float startMaxXPos;
@@ -45,7 +46,7 @@ public class GameController : MonoBehaviour
 	private Transform playerContainer;
 	private PlayerController player;
 	private PlayerHud playerUI;
-	private GameObject[] playerSprites;
+	private SpriteRenderer[] playerSprites;
 
 	public Color player1Color;
 	public Color player2Color;
@@ -69,6 +70,7 @@ public class GameController : MonoBehaviour
 		currCreator = 1;
 		ranTwice = false;
 		playerReachedEnd = false;
+		roundStarted = false;
 
 		if (maxRounds <= 0)
 			maxRounds = 5;
@@ -105,16 +107,18 @@ public class GameController : MonoBehaviour
 					creator.transform.position = tempPos;
 					creator.money = mapinfo.mapMoney;
 					creator.ui.updateMoneyText(creator.money);
+					if (currCreator == 0) {
+						//creatorRenderer.color = player1Color;
+						creatorRenderer.color = new Color(player1Color.r, player1Color.g, player1Color.b);
+					} else {
+						//creatorRenderer.color = player2Color;
+						creatorRenderer.color = new Color(player2Color.r, player2Color.g, player2Color.b);
+						//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
+					}
 				}
 				creator.ui.updateTimers(timeText);
 				// creator creatorContainer creatorUI creatorPrefab
-				/*
-				if (currCreator == 0) {
-					creatorRenderer.color = player1Color;
-				} else {
-					creatorRenderer.color = player2Color;
-				}
-				*/
+
 				//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
 
 				if (timer <= 0 || creator.money <= 0)
@@ -170,10 +174,30 @@ public class GameController : MonoBehaviour
 						timer = phaseSwitchTimes[phaseSwitchState];
 					}
 				}
+
 				break;
 			}
 		case 2: //Player
 			{
+				if (!roundStarted) {
+					//change color of player
+					foreach (SpriteRenderer ob in playerSprites) {
+						Debug.Log (ob.name);
+						if (currPlayer == 0) {
+							//creatorRenderer.color = player1Color;
+							PlayerController playerController = player.GetComponent<PlayerController> ();
+							playerController.defaultColor = new Color (player1Color.r, player1Color.g, player1Color.b);
+							ob.color = new Color(player1Color.r, player1Color.g, player1Color.b);
+						} else {
+							//creatorRenderer.color = player2Color;
+							PlayerController playerController = player.GetComponent<PlayerController> ();
+							playerController.defaultColor = new Color(player2Color.r, player2Color.g, player2Color.b);
+							ob.color = new Color(player2Color.r, player2Color.g, player2Color.b);
+							//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
+						}
+					}
+					roundStarted = true;
+				}
 				string timeText;
 				timeText = (int)((timer + 1) / 60) + ":" + (int)(((timer + 1) % 60) / 10) + (int)(((timer + 1) % 60) % 10);
 				player.ui.updateTimers(timeText);
@@ -259,6 +283,7 @@ public class GameController : MonoBehaviour
 					player.resetEverything();
 					nextState();
 					playerReachedEnd = false;
+					roundStarted = false;
 				}
 				else if (player.currentHealth <= 0)
 				{
@@ -298,6 +323,15 @@ public class GameController : MonoBehaviour
 					Vector3 tempPos = mapinfo.startLocation.transform.position;
 					tempPos.z = creator.transform.position.z;
 					creator.transform.position = tempPos;
+
+					if (currCreator == 0) {
+						//creatorRenderer.color = player1Color;
+						creatorRenderer.color = new Color(player1Color.r, player1Color.g, player1Color.b);
+					} else {
+						//creatorRenderer.color = player2Color;
+						creatorRenderer.color = new Color(player2Color.r, player2Color.g, player2Color.b);
+						//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
+					}
 
 					camera.setFollowing(creator.gameObject);
 					nextState();
@@ -341,9 +375,9 @@ public class GameController : MonoBehaviour
 		player = playerContainer.Find("PlayerEnt").GetComponent<PlayerController>();
 		playerUI = playerContainer.Find("PlayerUI").GetComponent<PlayerHud>();
 		//get components in children
+		playerSprites = player.gameObject.GetComponentsInChildren<SpriteRenderer>();
 		/*
-		playerSprites = player.gameObject.GetComponentsInChildren<GameObject>();
-		foreach (GameObject ob in playerSprites) {
+		 * foreach (SpriteRenderer ob in playerSprites) {
 			Debug.Log (ob.name);
 		}
 		*/
@@ -364,7 +398,7 @@ public class GameController : MonoBehaviour
 		creatorContainer = Instantiate(creatorPrefab).transform;
 		creator = creatorContainer.Find("CreatorEnt").GetComponent<CreatorController>();
 		creatorUI = creatorContainer.Find("CreatorUI").GetComponent<CreatorHud>();
-		//creatorRenderer = creator.gameObject.GetComponent<SpriteRenderer>();
+		creatorRenderer = creator.gameObject.GetComponent<SpriteRenderer>();
 		camera.setFollowing(creator.gameObject);
 
 		if (Input.GetJoystickNames().Length > 1)

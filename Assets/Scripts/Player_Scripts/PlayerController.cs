@@ -13,6 +13,7 @@ public class PlayerController: MonoBehaviour {
 	public float currentHealth;
 	public bool onLadder = false;
 	public string powerUp;
+	public Color defaultColor;
 
 	// Player Default Attributes
 	// Is based on the player's values at Start
@@ -230,8 +231,8 @@ public class PlayerController: MonoBehaviour {
 	IEnumerator takenDamage()
 	{
 		SpriteRenderer[] char_sprites = GetComponentsInChildren<SpriteRenderer> ();
-		Color color_with_opacity = new Color (1f, 1f, 1f, 0.7f);
-		Color color_without_opacity = new Color (1f, 1f, 1f, 1f);
+		Color color_with_opacity = new Color (defaultColor.r, defaultColor.g, defaultColor.b, 0.7f);
+		Color color_without_opacity = new Color (defaultColor.r, defaultColor.g, defaultColor.b, 1f);
 		int number_of_blinks = (int) (invincible_duration / blink_speed);
 		canTakeDamage = false;
 
@@ -242,7 +243,7 @@ public class PlayerController: MonoBehaviour {
 		yield return new WaitForSeconds(0.3f);
 		foreach (SpriteRenderer rend in char_sprites) {
 			if (rend)
-				rend.color = Color.white;
+				rend.color = new Color(defaultColor.r, defaultColor.g, defaultColor.b);
 		}
 		int count = 0;
 		while (count < number_of_blinks) {
@@ -278,7 +279,7 @@ public class PlayerController: MonoBehaviour {
 		resetHealthOfPlayer ();
 		SpriteRenderer[] char_sprites = GetComponentsInChildren<SpriteRenderer> ();
 		foreach (SpriteRenderer rend in char_sprites) {
-			rend.color = Color.white;
+			rend.color = new Color(defaultColor.r, defaultColor.g, defaultColor.b);
 		}
 		canTakeDamage = true;
 	}
