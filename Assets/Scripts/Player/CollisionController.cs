@@ -3,11 +3,14 @@ using System.Collections;
 
 public class CollisionController : MonoBehaviour {
 
+	public bool isPlayer;
 	public PlayerController player;
 	public GameController game;
 
 	void Start() {
-		player = GetComponent<PlayerController> ();
+		isPlayer = gameObject.tag.Equals ("Player");
+		if(isPlayer)
+			player = GetComponent<PlayerController> ();
 		game = GameObject.Find ("Game").GetComponent<GameController> ();
 	}
 
@@ -16,14 +19,14 @@ public class CollisionController : MonoBehaviour {
 		switch (other.gameObject.tag) {
 
 		case "LaserBeam":
-			player.applyDamage (10f);
+			gameObject.SendMessage ("applyDamage", 10f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 			break;
 		case "Lava":
-			player.applyDamage (20f);
+			gameObject.SendMessage ("applyDamage", 20f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 			break;
 		case "Slime":
-			if(!player.powerUp.Equals("jump"))
-			player.jumpForce = 600f;
+			if(isPlayer && !player.powerUp.Equals("jump"))
+				player.jumpForce = 600f;
 			break;
 		}
 	}
@@ -33,33 +36,41 @@ public class CollisionController : MonoBehaviour {
 		switch (other.gameObject.tag) {
 
 		case "Obstacle_Damage":
-			player.applyDamage (10f);
+			gameObject.SendMessage ("applyDamage", 10f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 			break;
 		case "Saw":
-			player.applyDamage (30f);
+			gameObject.SendMessage ("applyDamage", 30f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 			break;
 		case "Ladder":
-			player.onLadder = true;
+			if(isPlayer)
+				player.onLadder = true;
 			break;
 		case "EndFlag":
-			game.endPlayerPhase ();
+			if(isPlayer)
+				game.endPlayerPhase ();
 			break;
 		case "Spike":
-			player.applyDamage (10f);
+			gameObject.SendMessage ("applyDamage", 10f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 			break;
 		case "OutOfBounds":
-			player.applyDamage (1000f);
+			gameObject.SendMessage ("applyDamage", 1000f, UnityEngine.SendMessageOptions.DontRequireReceiver);
+			break;
+		case "SpiderCrawler":
+			if(isPlayer)
+				gameObject.SendMessage ("applyDamage", 10f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 			break;
 		}
 	}
 
 	void OnCollisionExit2D(Collision2D col)
 	{
-		player.resetAttributesToDefault ();
+		if(isPlayer)
+			player.resetAttributesToDefault ();
 	}
 
 	void OnTriggerExit2D(Collider2D col)
 	{
-		player.resetAttributesToDefault ();
+		if(isPlayer)
+			player.resetAttributesToDefault ();
 	}
 }

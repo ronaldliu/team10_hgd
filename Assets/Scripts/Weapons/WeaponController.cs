@@ -58,6 +58,7 @@ public class WeaponController : MonoBehaviour {
 		if (hit) {
 			generateTrail (hit.distance);
 			print ("Hit: " + hit.transform.name);
+
 			hit.transform.gameObject.SendMessage ("applyDamage", this.damageDone, UnityEngine.SendMessageOptions.DontRequireReceiver);
 		} else {
 			generateTrail ();
