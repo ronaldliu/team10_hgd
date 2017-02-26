@@ -6,7 +6,7 @@ public class SpiderController : MonoBehaviour {
 	public int health = 100;
 	private Transform target;
 	private float direction;
-	private float velocity = 2f;
+	private float velocity = 6f;
 	private bool facingLeft = true;
 	private float distanceFromPlayer;
 	public float range = 20f;
