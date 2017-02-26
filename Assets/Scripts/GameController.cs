@@ -247,17 +247,6 @@ public class GameController : MonoBehaviour
 					nextState();
 					playerReachedEnd = false;
 				}
-				else if (player.currentHealth <= 0)
-				{
-					player.resetHealthOfPlayer();
-
-					// Position player at start
-					Vector3 tempPos = mapinfo.startLocation.transform.position;
-					tempPos.z = player.transform.position.z;
-					player.transform.position = tempPos;
-					scores[currPlayer] -= 100;
-					scores[currCreator] += 100;
-				}
 				break;
 			}
 		case 3:
@@ -369,6 +358,18 @@ public class GameController : MonoBehaviour
 	{
 		foreach (Transform powerUp in mapContainer.transform.Find("PowerUps"))
 			powerUp.gameObject.SetActive(true);
+	}
+
+	public void respawnPlayer()
+	{
+		player.resetHealthOfPlayer();
+
+		// Position player at start
+		Vector3 tempPos = mapinfo.startLocation.transform.position;
+		tempPos.z = player.transform.position.z;
+		player.transform.position = tempPos;
+		scores[currPlayer] -= 100;
+		scores[currCreator] += 100;
 	}
 
 	public void applyGameObject(GameObject child)
