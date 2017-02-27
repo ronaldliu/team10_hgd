@@ -10,6 +10,8 @@ public class MapEditor : EditorWindow {
 	List<GameObject> placableWeapons;
 	GameObject mousedOver;
 
+	static GameObject draggedObj;
+
 	//Texture saw; //TODO test
 
 	public static bool meme;
@@ -33,14 +35,23 @@ public class MapEditor : EditorWindow {
 		SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		SceneView.onSceneGUIDelegate += OnSceneGUI;
 
-		placablePowerUps = new List<GameObject> ();
-		placableWeapons = new List<GameObject> ();
-		Object[] placables = Resources.LoadAll ("PowerUps/");
-		foreach(Object obj in placables) {
-			if(((GameObject)obj).GetComponent<PickUpPower>() != null)
-				placablePowerUps.Add((GameObject)obj);
-			if(((GameObject)obj).GetComponent<PickUpWeapon>() != null)
-				placableWeapons.Add((GameObject)obj);
+		if (!mapInScene) {
+			if (mapObj = GameObject.FindObjectOfType<MapInfo> ().gameObject) {
+				readInfo ();
+				mapInScene = true;
+			}
+		}
+
+		if (placablePowerUps == null) {
+			placablePowerUps = new List<GameObject> ();
+			placableWeapons = new List<GameObject> ();
+			Object[] placables = Resources.LoadAll ("PowerUps/");
+			foreach (Object obj in placables) {
+				if (((GameObject)obj).GetComponent<PickUpPower> () != null)
+					placablePowerUps.Add ((GameObject)obj);
+				if (((GameObject)obj).GetComponent<PickUpWeapon> () != null)
+					placableWeapons.Add ((GameObject)obj);
+			}
 		}
 	}
 
@@ -65,6 +76,48 @@ public class MapEditor : EditorWindow {
 
 		if(meme)
 			GUI.Label (new Rect(Screen.width - 250, Screen.height - 250, 250, 250), Resources.Load("meme") as Texture);
+
+
+		if (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform)
+		{
+			DragAndDrop.visualMode = DragAndDropVisualMode.Copy; // show a drag-add icon on the mouse cursor
+
+			if (draggedObj == null)
+				draggedObj = (GameObject)Object.Instantiate(DragAndDrop.objectReferences[0]);
+
+			// compute mouse position on the world y=0 plane
+			Ray mouseRay = Camera.current.ScreenPointToRay(new Vector3(Event.current.mousePosition.x, Screen.height - Event.current.mousePosition.y, 0.0f));
+			if (mouseRay.direction.y < 0.0f)
+			{
+				float t = -mouseRay.origin.y / mouseRay.direction.y;
+				Vector3 mouseWorldPos = mouseRay.origin + t * mouseRay.direction;
+				mouseWorldPos.y = 0.0f;
+
+				draggedObj.transform.position = mouseWorldPos;
+			}
+
+			if (Event.current.type == EventType.DragPerform)
+			{
+				DragAndDrop.AcceptDrag();
+				draggedObj = null;
+			}
+
+			Event.current.Use();
+		}
+
+		/*
+		switch (Event.current.type) {
+		case EventType.DragPerform:
+			DragAndDrop.AcceptDrag ();
+			//
+			DragAndDrop.PrepareStartDrag ();
+			Object[] or = { mousedOver };
+			DragAndDrop.objectReferences = or;
+			DragAndDrop.StartDrag ("BOOP");
+
+			Event.current.Use ();
+			break;
+		} */
 
 		Handles.EndGUI();
 	}
@@ -177,6 +230,11 @@ public class MapEditor : EditorWindow {
 	//Pull MapInfo from mapObj
 	void readInfo() {
 		mapName = mapObj.name;
+		platforms = mapObj.transform.Find ("Platforms");
+		startLocation = mapObj.transform.Find ("StartLocation");
+		endFlag = mapObj.transform.Find ("EndFlag");
+		outOfBounds = mapObj.transform.Find ("OutOfBounds");
+		powerUps = mapObj.transform.Find ("PowerUps");
 		mapInfo = mapObj.GetComponent<MapInfo> ();
 
 	}
