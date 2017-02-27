@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
+using System.Collections.Generic;
 
 public class MapEditor : EditorWindow {
 
 	bool mapInScene;
-	GameObject sawObj;
-	Texture saw; //TODO test
+	Transform platforms, startLocation, endFlag, outOfBounds, powerUps;
+	List<GameObject> placablePowerUps;
+	List<GameObject> placableWeapons;
+	GameObject mousedOver;
+
+	//Texture saw; //TODO test
+
+	public static bool meme;
 
 	//Map references
 	GameObject mapObj;
@@ -21,18 +27,52 @@ public class MapEditor : EditorWindow {
 		EditorWindow.GetWindow (typeof(MapEditor));
 	}
 
+	void OnFocus() {
+		// Remove delegate listener if it has previously
+		// been assigned.
+		SceneView.onSceneGUIDelegate -= OnSceneGUI;
+		SceneView.onSceneGUIDelegate += OnSceneGUI;
+
+		placablePowerUps = new List<GameObject> ();
+		placableWeapons = new List<GameObject> ();
+		Object[] placables = Resources.LoadAll ("PowerUps/");
+		foreach(Object obj in placables) {
+			if(((GameObject)obj).GetComponent<PickUpPower>() != null)
+				placablePowerUps.Add((GameObject)obj);
+			if(((GameObject)obj).GetComponent<PickUpWeapon>() != null)
+				placableWeapons.Add((GameObject)obj);
+		}
+	}
+
+	void OnDestroy() {
+		// When the window is destroyed, remove the delegate
+		// so that it will no longer do any drawing.
+		SceneView.onSceneGUIDelegate -= OnSceneGUI;
+	}
+
 	void Awake() {
 		mapInScene = false;
-		saw = (Resources.Load ("Traps/Saw") as GameObject).GetComponent<SpriteRenderer> ().sprite.texture;
+		meme = false;
 		mapName = "Map";
+	}
+
+	private static void OnSceneGUI(SceneView sceneview)
+	{
+		Handles.BeginGUI();
+
+		//if (GUILayout.Button("Press Me"))
+		//	Debug.Log("Got it to work.");
+
+		if(meme)
+			GUI.Label (new Rect(Screen.width - 250, Screen.height - 250, 250, 250), Resources.Load("meme") as Texture);
+
+		Handles.EndGUI();
 	}
 
 	void OnGUI() {
 		
 		GUILayout.Label ("Map Settings", EditorStyles.boldLabel);
 		mapName = EditorGUILayout.TextField ("Map Name", mapName);
-
-		sawObj = (GameObject)EditorGUILayout.ObjectField ("Saw", sawObj, typeof(GameObject), false);
 
 		if (!mapInScene) {
 
@@ -45,26 +85,61 @@ public class MapEditor : EditorWindow {
 			mapInfo.timeToFinish = EditorGUILayout.FloatField ("Time to Finish (sec)", mapInfo.timeToFinish);
 			mapInfo.mapMoney = EditorGUILayout.IntField ("Map Money", mapInfo.mapMoney);
 
+			mousedOver = null;
+
+			GUILayout.Label ("PowerUps", EditorStyles.boldLabel);
+
 			EditorGUILayout.BeginHorizontal ();
-			float boxSize = (Screen.width - GUI.skin.window.padding.horizontal) / 2;
-			GUILayout.Box (saw, GUILayout.Width(boxSize), GUILayout.Height(boxSize));
-			GUILayout.Box (saw, GUILayout.Width(boxSize), GUILayout.Height(boxSize));
+			float boxSize = (Screen.width / placablePowerUps.Count) - GUI.skin.box.margin.horizontal;
+			foreach (GameObject go in placablePowerUps) {
+				Texture goTex;
+				if (goTex = go.GetComponent<SpriteRenderer> ().sprite.texture) {
+					GUILayout.Box (goTex, GUILayout.Width(boxSize), GUILayout.Height(boxSize));
+
+					//Check if this box was moused over
+					if (GUILayoutUtility.GetLastRect ().Contains (Event.current.mousePosition)) {
+						mousedOver = go;
+					}
+				}
+			}
 			EditorGUILayout.EndHorizontal ();
+
+			GUILayout.Label ("Weapons", EditorStyles.boldLabel);
+
+			EditorGUILayout.BeginHorizontal ();
+			boxSize = (Screen.width / placableWeapons.Count) - GUI.skin.box.margin.horizontal;
+			foreach (GameObject go in placableWeapons) {
+				Texture goTex;
+				if (goTex = go.GetComponent<PickUpWeapon> ()
+						.attachedWeaponPrefab.GetComponent<SpriteRenderer> ().sprite.texture) {
+					GUILayout.Box (goTex, GUILayout.Width(boxSize), GUILayout.Height(boxSize));
+
+					//Check if this box was moused over
+					if (GUILayoutUtility.GetLastRect ().Contains (Event.current.mousePosition)) {
+						mousedOver = go;
+					}
+				}
+			}
+			EditorGUILayout.EndHorizontal ();
+
+			meme = EditorGUILayout.Toggle ("Meme", meme);
 
 			handleDrag ();
 		}
 	}
 
 	void handleDrag() {
-		switch (Event.current.type) {
-		case EventType.MouseDrag:
-			DragAndDrop.PrepareStartDrag ();
-			Object[] ar = { sawObj };
-			DragAndDrop.objectReferences = ar;
-			DragAndDrop.StartDrag ("BOOP");
+		if (mousedOver) {
+			switch (Event.current.type) {
+			case EventType.MouseDrag:
+				DragAndDrop.PrepareStartDrag ();
+				Object[] or = { mousedOver };
+				DragAndDrop.objectReferences = or;
+				DragAndDrop.StartDrag ("BOOP");
 
-			Event.current.Use ();
-			break;
+				Event.current.Use ();
+				break;
+			}
 		}
 	}
 
@@ -88,6 +163,12 @@ public class MapEditor : EditorWindow {
 
 		mapObj = Instantiate (template);
 		mapObj.name = mapName;
+
+		platforms = mapObj.transform.Find ("Platforms");
+		startLocation = mapObj.transform.Find ("StartLocation");
+		endFlag = mapObj.transform.Find ("EndFlag");
+		outOfBounds = mapObj.transform.Find ("OutOfBounds");
+		powerUps = mapObj.transform.Find ("PowerUps");
 		mapInfo = mapObj.GetComponent<MapInfo> ();
 
 		return true;
