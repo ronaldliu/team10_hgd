@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MapEditor : EditorWindow {
 
 	bool mapInScene;
-	Transform platforms, startLocation, endFlag, outOfBounds, powerUps;
+	public static Transform platforms, startLocation, endFlag, outOfBounds, powerUps;
 	List<GameObject> placablePowerUps;
 	List<GameObject> placableWeapons;
 	GameObject mousedOver;
@@ -85,39 +85,26 @@ public class MapEditor : EditorWindow {
 			if (draggedObj == null)
 				draggedObj = (GameObject)Object.Instantiate(DragAndDrop.objectReferences[0]);
 
-			// compute mouse position on the world y=0 plane
-			Ray mouseRay = Camera.current.ScreenPointToRay(new Vector3(Event.current.mousePosition.x, Screen.height - Event.current.mousePosition.y, 0.0f));
-			if (mouseRay.direction.y < 0.0f)
-			{
-				float t = -mouseRay.origin.y / mouseRay.direction.y;
-				Vector3 mouseWorldPos = mouseRay.origin + t * mouseRay.direction;
-				mouseWorldPos.y = 0.0f;
-
-				draggedObj.transform.position = mouseWorldPos;
-			}
+			Vector3 mousePos = Event.current.mousePosition;
+			mousePos.y = sceneview.camera.pixelHeight - mousePos.y;
+			mousePos = sceneview.camera.ScreenToWorldPoint (mousePos);
+			mousePos.z = 0;
+			draggedObj.transform.position = mousePos;
 
 			if (Event.current.type == EventType.DragPerform)
 			{
 				DragAndDrop.AcceptDrag();
+				Selection.activeGameObject = draggedObj;
+
+				if (draggedObj.GetComponent<PickUpPower> () || draggedObj.GetComponent<PickUpWeapon> ()) {
+					draggedObj.transform.SetParent (powerUps);
+				}
+
 				draggedObj = null;
 			}
 
 			Event.current.Use();
 		}
-
-		/*
-		switch (Event.current.type) {
-		case EventType.DragPerform:
-			DragAndDrop.AcceptDrag ();
-			//
-			DragAndDrop.PrepareStartDrag ();
-			Object[] or = { mousedOver };
-			DragAndDrop.objectReferences = or;
-			DragAndDrop.StartDrag ("BOOP");
-
-			Event.current.Use ();
-			break;
-		} */
 
 		Handles.EndGUI();
 	}
@@ -142,12 +129,12 @@ public class MapEditor : EditorWindow {
 
 			GUILayout.Label ("PowerUps", EditorStyles.boldLabel);
 
-			EditorGUILayout.BeginHorizontal ();
-			float boxSize = (Screen.width / placablePowerUps.Count) - GUI.skin.box.margin.horizontal;
+			//EditorGUILayout.BeginHorizontal ();
 			foreach (GameObject go in placablePowerUps) {
 				Texture goTex;
 				if (goTex = go.GetComponent<SpriteRenderer> ().sprite.texture) {
-					GUILayout.Box (goTex, GUILayout.Width(boxSize), GUILayout.Height(boxSize));
+					GUIContent content = new GUIContent (go.name, goTex);
+					GUILayout.Box (content);
 
 					//Check if this box was moused over
 					if (GUILayoutUtility.GetLastRect ().Contains (Event.current.mousePosition)) {
@@ -155,17 +142,17 @@ public class MapEditor : EditorWindow {
 					}
 				}
 			}
-			EditorGUILayout.EndHorizontal ();
+			//EditorGUILayout.EndHorizontal ();
 
 			GUILayout.Label ("Weapons", EditorStyles.boldLabel);
 
-			EditorGUILayout.BeginHorizontal ();
-			boxSize = (Screen.width / placableWeapons.Count) - GUI.skin.box.margin.horizontal;
+			//EditorGUILayout.BeginHorizontal ();
 			foreach (GameObject go in placableWeapons) {
 				Texture goTex;
 				if (goTex = go.GetComponent<PickUpWeapon> ()
 						.attachedWeaponPrefab.GetComponent<SpriteRenderer> ().sprite.texture) {
-					GUILayout.Box (goTex, GUILayout.Width(boxSize), GUILayout.Height(boxSize));
+					GUIContent content = new GUIContent (go.name, goTex);
+					GUILayout.Box (content);
 
 					//Check if this box was moused over
 					if (GUILayoutUtility.GetLastRect ().Contains (Event.current.mousePosition)) {
@@ -173,9 +160,11 @@ public class MapEditor : EditorWindow {
 					}
 				}
 			}
-			EditorGUILayout.EndHorizontal ();
+			//EditorGUILayout.EndHorizontal ();
 
-			meme = EditorGUILayout.Toggle ("Meme", meme);
+			if (meme = EditorGUILayout.Toggle ("Meme", meme)) {
+				SceneView.RepaintAll ();
+			}
 
 			handleDrag ();
 		}
