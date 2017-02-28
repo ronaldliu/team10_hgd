@@ -593,6 +593,80 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9550deb6588cc654cb2f38980d766e9e, type: 2}
   m_IsPrefabParent: 0
+--- !u!1001 &951655555
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -11.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000010911417004, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+      propertyPath: m_RootOrder
+      value: 14
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: ff213d11e873fca4bbe8cce5fec5576d, type: 2}
+  m_IsPrefabParent: 0
+--- !u!1 &951655556 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000014153503480, guid: ff213d11e873fca4bbe8cce5fec5576d,
+    type: 2}
+  m_PrefabInternal: {fileID: 951655555}
+--- !u!114 &951655557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 951655556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 363bde5ac3c00f9409cdc02b1b1fb1f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  name: Fan
+  description: Really Blows
+  cost: 100
+  canPlaceOnWalls: 1
+  canPlaceInAir: 0
+--- !u!114 &951655558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 951655556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88bdc3e5a0c29944980a21460e786c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1007418593
 Prefab:
   m_ObjectHideFlags: 0
