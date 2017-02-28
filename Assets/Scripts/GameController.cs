@@ -16,7 +16,8 @@ public class GameController : MonoBehaviour
 
 	public int maxRounds;
 
-	private int[] scores = { 0, 0 };
+	public static int winScore = 501;
+	private int[] scores = {0, 0};
 	private int currPlayer;
 	private int currCreator;
 	//Increase this for a longer Creator phase
@@ -246,17 +247,6 @@ public class GameController : MonoBehaviour
 					nextState();
 					playerReachedEnd = false;
 				}
-				else if (player.currentHealth <= 0)
-				{
-					player.resetHealthOfPlayer();
-
-					// Position player at start
-					Vector3 tempPos = mapinfo.startLocation.transform.position;
-					tempPos.z = player.transform.position.z;
-					player.transform.position = tempPos;
-					scores[currPlayer] -= 100;
-					scores[currCreator] += 100;
-				}
 				break;
 			}
 		case 3:
@@ -292,16 +282,19 @@ public class GameController : MonoBehaviour
 			}
 		case 4: // END GAME
 			{
-				if (scores[0] < scores[1])
-					scoreboard.setLoser(0);
-				else if (scores[1] < scores[0])
-					scoreboard.setLoser(1);
+				if (scores [0] < scores [1]) {
+					scoreboard.setLoser (0);
+					winScore = scores [1];
+				} else if (scores [1] < scores [0]) {
+					scoreboard.setLoser (1);
+					winScore = scores [0];
+				}
 				else
-					scoreboard.setLoser(3);
-				
-				if (Input.GetButtonDown("A_1") || Input.GetButtonDown("A_2"))
-				{
-					SceneManager.LoadScene("MainMenu");	
+					scoreboard.setLoser (3);
+
+				// Look for possible new high score:
+				if (Input.GetButtonDown ("A_1") || Input.GetButtonDown ("A_2")) {
+					SceneManager.LoadScene ("InputName");
 				}
 				break;
 			}
@@ -367,6 +360,18 @@ public class GameController : MonoBehaviour
 			powerUp.gameObject.SetActive(true);
 	}
 
+	public void respawnPlayer()
+	{
+		player.resetHealthOfPlayer();
+
+		// Position player at start
+		Vector3 tempPos = mapinfo.startLocation.transform.position;
+		tempPos.z = player.transform.position.z;
+		player.transform.position = tempPos;
+		scores[currPlayer] -= 100;
+		scores[currCreator] += 100;
+	}
+
 	public void applyGameObject(GameObject child)
 	{
 		child.transform.SetParent(spawnedContainer.transform);
@@ -375,7 +380,7 @@ public class GameController : MonoBehaviour
 	public void generateMap()
 	{
 		string rnd = Random.Range(1, 4).ToString();
-		string mapPath = "Map" + rnd;
+		string mapPath = "Maps/Map" + rnd;
 		mapContainer = Instantiate(Resources.Load(mapPath, typeof(GameObject))) as GameObject;
 		mapinfo = mapContainer.GetComponent<MapInfo>();
 	}

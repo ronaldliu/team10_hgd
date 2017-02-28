@@ -13,6 +13,7 @@ public class PlayerController: MonoBehaviour {
 	public float currentHealth;
 	public bool onLadder = false;
 	public string powerUp;
+	private bool isDead = false;
 
 	// Player Default Attributes
 	// Is based on the player's values at Start
@@ -23,10 +24,10 @@ public class PlayerController: MonoBehaviour {
 
 	private int contToUse;
 
-	bool facingRight = true;
+	private bool facingRight = true;
 
 	// References
-	Animator[] anims; // This is currently not used because I do not have animations yet
+	Animator anim; // This is currently not used because I do not have animations yet
 	Rigidbody2D rBody;
 	public WeaponController currentWeapon;
 	public WeaponController defaultWeapon;
@@ -60,10 +61,11 @@ public class PlayerController: MonoBehaviour {
 		default_jumpForce = jumpForce;
 		default_gravityScale = this.GetComponent<Rigidbody2D> ().gravityScale;
 		onLadder = false;
+		isDead = false;
 
 		contToUse = 1;
 
-		anims = GetComponentsInChildren<Animator> ();
+		anim = GetComponent<Animator> ();
 		rBody = GetComponent<Rigidbody2D> ();
 		if (GameObject.Find("PlayerUI"))
 			ui = GameObject.Find ("PlayerUI").GetComponent<PlayerHud>();
@@ -82,86 +84,89 @@ public class PlayerController: MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if ((onGround || onLadder) && (Input.GetButtonDown("A_" + contToUse) || Input.GetKeyDown("space"))) {
-			rBody.AddForce (new Vector2 (0f, jumpForce));
-			onGround = false;
-		}
-		// Shooting
-		if (currentWeapon != null && Input.GetAxis ("TriggersR_" + contToUse) < 0) {
-			currentWeapon.Fire ();
-			if (currentWeapon.ammo == 0)
-				pickUpWeapon (Instantiate(defaultWeapon));
-		}
+		if (!isDead) {
+			if ((onGround || onLadder) && (Input.GetButtonDown ("A_" + contToUse) || Input.GetKeyDown ("space"))) {
+				rBody.AddForce (new Vector2 (0f, jumpForce));
+				onGround = false;
+			}
+			// Shooting
+			if (currentWeapon != null && Input.GetAxis ("TriggersR_" + contToUse) < 0) {
+				currentWeapon.Fire ();
+				if (currentWeapon.ammo == 0)
+					pickUpWeapon (Instantiate (defaultWeapon));
+			}
 
-		if (Input.GetKey("a"))
-			transform.Translate(-Vector3.right * maxSpeed * Time.deltaTime);
-		if (Input.GetKey("d"))
-			transform.Translate(-Vector3.left * maxSpeed * Time.deltaTime);
+			if (Input.GetKey ("a"))
+				transform.Translate (-Vector3.right * maxSpeed * Time.deltaTime);
+			if (Input.GetKey ("d"))
+				transform.Translate (-Vector3.left * maxSpeed * Time.deltaTime);
+		}
 	}
 
 	void FixedUpdate () {
 		onGround = Physics2D.OverlapCircle (groundCheck.position, groundRadius, whatIsGround);
 
-		float inputDirection = Input.GetAxis ("L_XAxis_" + contToUse);
-		// Calculate how much the velocity should change based on xAccel
-		float velChange = inputDirection * xAccel;
-		float newXVelocity, newYVelocity;
+		if (!isDead) {
+			float inputDirection = Input.GetAxis ("L_XAxis_" + contToUse);
+			// Calculate how much the velocity should change based on xAccel
+			float velChange = inputDirection * xAccel;
+			float newXVelocity, newYVelocity;
 
-		if (velChange != 0f) {
-			// Add to the current velocity
-			newXVelocity = rBody.velocity.x + velChange;
-			if (onGround) {
-				PlayAnimation ("Walking");
-			}
-		} else { 
-			// Stop completely if there's no input
-			newXVelocity = 0f;
-			if (onGround)
-				PlayAnimation ("Idle");
-		}
-		// Limit the max velocity
-		newXVelocity = Mathf.Clamp(newXVelocity, -maxSpeed, maxSpeed);
-
-		if (onLadder) {
-			float inputY = Input.GetAxis ("L_YAxis_" + contToUse);
-			float yVelChange = -1 * inputY * xAccel;
-			if (yVelChange != 0f) {
+			if (velChange != 0f) {
 				// Add to the current velocity
-				newYVelocity = rBody.velocity.y + yVelChange;
+				newXVelocity = rBody.velocity.x + velChange;
+				if (onGround) {
+					PlayAnimation ("Walking");
+				}
 			} else { 
 				// Stop completely if there's no input
-				newYVelocity = 0f;
-				rBody.gravityScale = 0f;
+				//newXVelocity = 0f;
+				newXVelocity = rBody.velocity.x + velChange;
+				if (onGround)
+					PlayAnimation ("Idle");
 			}
-			newYVelocity = Mathf.Clamp(newYVelocity, -maxSpeed, maxSpeed);
-		} else {
-			newYVelocity = rBody.velocity.y;
+			// Limit the max velocity
+			newXVelocity = Mathf.Clamp (newXVelocity, -maxSpeed, maxSpeed);
+
+			if (onLadder) {
+				float inputY = Input.GetAxis ("L_YAxis_" + contToUse);
+				float yVelChange = -1 * inputY * xAccel;
+				if (yVelChange != 0f) {
+					// Add to the current velocity
+					newYVelocity = rBody.velocity.y + yVelChange;
+				} else {
+					// Stop completely if there's no input
+					newYVelocity = 0f;
+					rBody.gravityScale = 0f;
+				}
+				newYVelocity = Mathf.Clamp (newYVelocity, -maxSpeed, maxSpeed);
+			} else {
+				newYVelocity = rBody.velocity.y;
+			}
+
+			// Apply the new velocity
+			//rBody.AddForce(new Vector2(newXVelocity, 0)*10);
+			rBody.velocity = new Vector2 (newXVelocity * 0.925f, newYVelocity);
+
+
+			// Update the speed of the walking animation
+			anim.SetFloat ("Speed", Mathf.Abs (newXVelocity * 2) / maxSpeed);
+
+			// Make sure the character is facing the right direction
+			if (inputDirection > 0 && !facingRight)
+				Flip ();
+			else if (inputDirection < 0 && facingRight)
+				Flip ();
+
+			// Should start falling animation?
+			if (!onGround)
+				PlayAnimation ("Falling");
 		}
-
-		// Apply the new velocity
-		rBody.velocity = new Vector2 (newXVelocity, newYVelocity);
-
-
-		// Update the speed of the walking animation
-		for (int i=0; i<anims.Length; i++)
-			anims[i].SetFloat ("Speed", Mathf.Abs(newXVelocity*2)/maxSpeed);
-
-		// Make sure the character is facing the right direction
-		if (inputDirection > 0 && !facingRight)
-			Flip ();
-		else if (inputDirection < 0 && facingRight)
-			Flip ();
-
-		// Should start falling animation?
-		if (!onGround)
-			PlayAnimation ("Falling");
 	}
 
 	void PlayAnimation(string name) {
-		if(!anims[0].GetCurrentAnimatorStateInfo(0).IsName(name))
-			for (int i=0; i<anims.Length; i++){
-				anims[i].Play (name, 0, i*0.5f); //Use i*0.5 to offset the second foot
-			}
+		if(!anim.GetCurrentAnimatorStateInfo(0).IsName(name))
+			anim.Play (name, 0, 0f);
 	}
 		
 	void Flip () {
@@ -205,7 +210,7 @@ public class PlayerController: MonoBehaviour {
 	 *	cause no damage was taken.
 	 */
 	public void applyDamage(float damage) {
-		if (canTakeDamage) {
+		if (!isDead && canTakeDamage) {
 			// Calculate the damage taken
 			float actualDamage;
 			actualDamage = damage * resistance;
@@ -218,6 +223,21 @@ public class PlayerController: MonoBehaviour {
 				StartCoroutine ("takenDamage");
 
 			if (ui) ui.updateHealth ();
+
+			if (currentHealth <= 0) {
+				isDead = true;
+				//The animation will call "respawn" on completion
+				PlayAnimation ("Death");
+			}
+		}
+	}
+
+	public void respawn() {
+		//Respawn the player if possible
+		GameObject game;
+		if (game = GameObject.Find ("Game")) {
+			game.GetComponent<GameController>().respawnPlayer ();
+			isDead = false;
 		}
 	}
 

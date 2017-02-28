@@ -17,15 +17,15 @@ public class RotateTowardsInput : MonoBehaviour {
 		
 	}
 	
-	// Update is called once per frame
-	void Update () {
+	// LateUpdate is called once per frame
+	void LateUpdate () {
 		isFlipped = transform.parent.localScale.x < 0;
 
 		if (Input.GetAxis ("R_XAxis_" + contToUse) != 0 || Input.GetAxis ("R_YAxis_" + contToUse) != 0) {
 			aimPosX = Input.GetAxis ("R_XAxis_" + contToUse);
 			aimPosY = Input.GetAxis ("R_YAxis_" + contToUse);
 		} else {
-			aimPosX = transform.localScale.x;
+			aimPosX = transform.parent.localScale.x;
 			aimPosY = 0;
 		}
 
@@ -44,8 +44,8 @@ public class RotateTowardsInput : MonoBehaviour {
 
     public void rotate()
     {
-		float angle = Mathf.Atan2(aimPosY, aimPosX) * Mathf.Rad2Deg * -1;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+		float angle = Mathf.Atan2 (aimPosY, aimPosX) * Mathf.Rad2Deg * -1;
+		transform.rotation = Quaternion.Euler (new Vector3 (0, 0, angle));
 
 		float scaleX, scaleY;
 
