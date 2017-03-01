@@ -35,8 +35,8 @@ public static class Leaderboard {
 		lbScores.Clear ();
 		for (int ctr = 0; ctr < numHighScores; ++ctr) {
 			HighScore hs;
-			hs.score = PlayerPrefs.GetInt("x[" + ctr + "].score", 0);
-			hs.name = PlayerPrefs.GetString("x[" + ctr + "].name", "");
+			hs.score = PlayerPrefs.GetInt("lb[" + ctr + "].score", 0);
+			hs.name = PlayerPrefs.GetString("lb[" + ctr + "].name", "");
 			lbScores.Add(hs);
 		}
 		sortLB();
@@ -45,8 +45,8 @@ public static class Leaderboard {
 	private static void saveLB() {
 		for (int ctr = 0; ctr < numHighScores; ++ctr) {
 			var hs = lbScores [ctr];
-			PlayerPrefs.SetInt ("x[" + ctr + "].score", hs.score);
-			PlayerPrefs.SetString ("x[" + ctr + "].name", hs.name);
+			PlayerPrefs.SetInt ("lb[" + ctr + "].score", hs.score);
+			PlayerPrefs.SetString ("lb[" + ctr + "].name", hs.name);
 		}
 	}
 
@@ -62,7 +62,7 @@ public static class Leaderboard {
 		sortLB ();
 
 		// Change return if score is in top 10:
-		if (!getHS(scores.Count - 1).name.Equals ("temp")) {
+		if (!getHS(scores.Count - 1).name.Equals ("YOU")) {
 			ret = 1;
 		}
 

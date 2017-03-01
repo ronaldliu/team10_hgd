@@ -16,7 +16,7 @@ public class GameController : MonoBehaviour
 
 	public int maxRounds;
 
-	public static int winScore = 501;
+	public static int winScore = 0;
 	private int[] scores = {0, 0};
 	private int currPlayer;
 	private int currCreator;
