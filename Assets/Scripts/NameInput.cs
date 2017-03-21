@@ -52,11 +52,11 @@ public class NameInput : MonoBehaviour {
 
 	void Start() {
 
-		// Debug!!!
+		// Debug Only!!!
 		//PlayerPrefs.DeleteAll ();
 
 		// Add winner's score to check if it's in top 10, go to main menu if not:
-		int x = Leaderboard.setHS(GameController.winScore, "temp");
+		int x = Leaderboard.setHS(GameController.winScore, "YOU");
 		if (x == 0) {
 			SceneManager.LoadScene ("MainMenu");
 		}
@@ -86,7 +86,7 @@ public class NameInput : MonoBehaviour {
 			cont.text = "";
 
 		// Tapping up on joystick, moves up alphabet:
-		if (Input.GetAxis("L_YAxis_1") < 0 && !tapped) {
+		if ((Input.GetAxis("L_YAxis_1") < 0 && !tapped) || Input.GetKeyDown(KeyCode.UpArrow)) {
 			lastTap = Time.time;
 			tapped = true;
 			if (index [pos] == 25) {
@@ -101,7 +101,7 @@ public class NameInput : MonoBehaviour {
 		}
 
 		// Tapping down on joystick, moves down alphabet:
-		if (Input.GetAxis("L_YAxis_1") > 0 && !tapped) {
+		if ((Input.GetAxis("L_YAxis_1") > 0 && !tapped) || Input.GetKeyDown(KeyCode.DownArrow)) {
 			lastTap = Time.time;
 			tapped = true;
 			if (index [pos] == 0) {
@@ -116,7 +116,7 @@ public class NameInput : MonoBehaviour {
 		}
 
 		// Moving to left on joystick, switches to different letter:
-		if (Input.GetAxis("L_XAxis_1") < 0 && !tapped) {
+		if ((Input.GetAxis("L_XAxis_1") < 0 && !tapped) || Input.GetKeyDown(KeyCode.LeftArrow)) {
 			lastTap = Time.time;
 			tapped = true;
 			if (pos == 0) {
@@ -135,7 +135,7 @@ public class NameInput : MonoBehaviour {
 		}
 
 		// Moving to right on joystick, switches to different letter:
-		if (Input.GetAxis("L_XAxis_1") > 0 && !tapped){
+		if ((Input.GetAxis("L_XAxis_1") > 0 && !tapped) || Input.GetKeyDown(KeyCode.RightArrow)){
 			lastTap = Time.time;
 			tapped = true;
 			if (pos == 2) {
@@ -153,7 +153,7 @@ public class NameInput : MonoBehaviour {
 				tapped = false;
 		}
 			
-		if (Input.GetButtonDown("Start_1")) {
+		if (Input.GetButtonDown("Start_1") || Input.GetKeyDown(KeyCode.KeypadEnter)) {
 
 			// Store player name:
 			hsName = letter1.text + letter2.text + letter3.text;
@@ -161,16 +161,15 @@ public class NameInput : MonoBehaviour {
 			// Load high scores until new score found:
 			int ctr = 0;
 			var hs = Leaderboard.lbScores [ctr];
-			while (!hs.name.Equals ("temp")) {
+			while (!hs.name.Equals ("YOU")) {
 				ctr++;
 				hs = Leaderboard.lbScores [ctr];
 			}
 
 			// Change name, save it, go to leaderboard:
 			hs.name = hsName;
-			PlayerPrefs.SetString ("x[" + ctr + "].name", hs.name);
+			PlayerPrefs.SetString ("lb[" + ctr + "].name", hs.name);
 			SceneManager.LoadScene ("Leaderboard");
-
 		}
 	}
 }
