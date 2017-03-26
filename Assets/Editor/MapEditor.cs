@@ -38,11 +38,9 @@ public class MapEditor : EditorWindow {
 		SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		SceneView.onSceneGUIDelegate += OnSceneGUI;
 
-		if (!mapInScene) {
-			if (mapObj = GameObject.FindObjectOfType<MapInfo> ().gameObject) {
-				readInfo ();
-				mapInScene = true;
-			}
+		if (mapObj = GameObject.FindObjectOfType<MapInfo> ().gameObject) {
+			readInfo ();
+			mapInScene = true;
 		}
 
 		if (placablePlatforms == null) {
@@ -84,6 +82,8 @@ public class MapEditor : EditorWindow {
 
 		//if (GUILayout.Button("Press Me"))
 		//	Debug.Log("Got it to work.");
+		if (startLocation != null)
+			startLocation.position = Handles.PositionHandle (startLocation.position, Quaternion.identity);
 
 		if (meme)
 			GUI.Label (new Rect (Screen.width - 250, Screen.height - 250, 250, 250), Resources.Load ("meme") as Texture);
@@ -99,11 +99,6 @@ public class MapEditor : EditorWindow {
 			mousePos.y = sceneview.camera.pixelHeight - mousePos.y;
 			mousePos = sceneview.camera.ScreenToWorldPoint (mousePos);
 			mousePos.z = 0;
-			//Snap platform to grid
-			if (draggedObj.GetComponent<PlatformController> () && platSnap) {
-				mousePos.x = Mathf.Round (mousePos.x / platSnapSize) * platSnapSize;
-				mousePos.y = Mathf.Round (mousePos.y / platSnapSize) * platSnapSize;
-			}
 			draggedObj.transform.position = mousePos;
 
 			if (Event.current.type == EventType.DragPerform) {
@@ -123,28 +118,22 @@ public class MapEditor : EditorWindow {
 			Event.current.Use ();
 		}
 
+
 		GameObject selected = Selection.activeGameObject;
 
 		if(selected) {
 			if (selected.GetComponent<PlatformController> () && platSnap) {
-				switch(Tools.current) {
-				case Tool.Move:
-					Vector3 mousePos = Event.current.mousePosition;
-					mousePos.y = sceneview.camera.pixelHeight - mousePos.y;
-					mousePos = sceneview.camera.ScreenToWorldPoint (mousePos);
-					mousePos.z = 0;
-					//Snap platform to grid
-					mousePos.x = Mathf.Round (mousePos.x / platSnapSize) * platSnapSize;
-					mousePos.y = Mathf.Round (mousePos.y / platSnapSize) * platSnapSize;
-					selected.transform.position = mousePos;
-					break;
-				case Tool.Scale:
-					Vector3 scale = selected.transform.localScale;
-					scale.x = Mathf.Round (scale.x / platSnapSize) * platSnapSize;
-					scale.y = Mathf.Round (scale.y / platSnapSize) * platSnapSize;
-					selected.transform.localScale = scale;
-					break;
-				}
+				//Snap platform to grid
+				Bounds bounds = selected.GetComponent<BoxCollider2D>().bounds;
+				Vector3 pos = bounds.center - bounds.extents;
+				pos.x = Mathf.Round (pos.x / platSnapSize) * platSnapSize;
+				pos.y = Mathf.Round (pos.y / platSnapSize) * platSnapSize;
+				selected.transform.position = pos + bounds.extents;
+
+				Vector3 scale = selected.transform.localScale;
+				scale.x = Mathf.Round (scale.x / platSnapSize) * platSnapSize;
+				scale.y = Mathf.Round (scale.y / platSnapSize) * platSnapSize;
+				selected.transform.localScale = scale;
 			}
 		}
 		Handles.EndGUI();
@@ -162,15 +151,22 @@ public class MapEditor : EditorWindow {
 			}
 		}
 		else {
+			mapObj.name = mapName;
 
 			mapInfo.timeToFinish = EditorGUILayout.FloatField ("Time to Finish (sec)", mapInfo.timeToFinish);
 			mapInfo.mapMoney = EditorGUILayout.IntField ("Map Money", mapInfo.mapMoney);
+			if (startLocation != null) {
+				startLocation.position = EditorGUILayout.Vector3Field ("Start Location", startLocation.position);
+				endFlag.position = EditorGUILayout.Vector3Field ("End Flag Location", endFlag.position);
+			}
+			if (GUILayout.Button ("Save " + mapName + " as Prefab"))
+				saveAsPrefab ();
 
 			mousedOver = null;
 
 			EditorGUILayout.Separator ();
 			GUILayout.Label ("Platforms", EditorStyles.boldLabel);
-
+			//EditorGUILayout.BeginHorizontal ();
 
 			foreach (GameObject go in placablePlatforms) {
 				Texture goTex;
@@ -184,6 +180,7 @@ public class MapEditor : EditorWindow {
 					}
 				}
 			}
+			//EditorGUILayout.EndHorizontal ();
 
 			platSnap = EditorGUILayout.BeginToggleGroup ("Snap to Grid", platSnap);
 			platSnapSize = EditorGUILayout.FloatField ("Snap Grid Size", platSnapSize);
@@ -193,8 +190,8 @@ public class MapEditor : EditorWindow {
 
 			EditorGUILayout.Separator ();
 			GUILayout.Label ("PowerUps", EditorStyles.boldLabel);
-
 			//EditorGUILayout.BeginHorizontal ();
+
 			foreach (GameObject go in placablePowerUps) {
 				Texture goTex;
 				if (goTex = go.GetComponent<SpriteRenderer> ().sprite.texture) {
@@ -211,8 +208,8 @@ public class MapEditor : EditorWindow {
 
 			EditorGUILayout.Separator ();
 			GUILayout.Label ("Weapons", EditorStyles.boldLabel);
-
 			//EditorGUILayout.BeginHorizontal ();
+
 			foreach (GameObject go in placableWeapons) {
 				Texture goTex;
 				if (goTex = go.GetComponent<PickUpWeapon> ()
@@ -300,5 +297,21 @@ public class MapEditor : EditorWindow {
 		mapObj.name = mapName;
 		mapInfo = mapObj.GetComponent<MapInfo> ();
 
+	}
+
+	void saveAsPrefab() {
+		//Set references where needed
+		mapInfo = mapObj.GetComponent<MapInfo> ();
+		mapInfo.startLocation = startLocation;
+		mapInfo.endFlag = endFlag.gameObject;
+		//Check if this map name exists already
+		if (Resources.Load ("Maps/" + mapName) as GameObject) {
+			bool result = EditorUtility.DisplayDialog ("Map Already Exists", "A map with this name already exists," +
+				" would you like to override it?", "OK", "Never Mind");
+			if (!result)
+				return;
+		}
+		PrefabUtility.CreatePrefab ("Assets/Prefabs/Resources/Maps/" + mapName+".prefab", mapObj, ReplacePrefabOptions.ReplaceNameBased);
+		EditorUtility.DisplayDialog ("Save Complete", "Map saved under Assets/Prefabs/Resources/Maps/" + mapName + ".prefab.", "OK");
 	}
 }
