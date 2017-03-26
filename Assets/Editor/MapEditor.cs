@@ -6,10 +6,13 @@ public class MapEditor : EditorWindow {
 
 	bool mapInScene;
 	public static Transform platforms, startLocation, endFlag, outOfBounds, powerUps;
+	List<GameObject> placablePlatforms;
 	List<GameObject> placablePowerUps;
 	List<GameObject> placableWeapons;
 	GameObject mousedOver;
 
+	static bool platSnap;
+	static float platSnapSize;
 	static GameObject draggedObj;
 
 	//Texture saw; //TODO test
@@ -35,17 +38,21 @@ public class MapEditor : EditorWindow {
 		SceneView.onSceneGUIDelegate -= OnSceneGUI;
 		SceneView.onSceneGUIDelegate += OnSceneGUI;
 
-		if (!mapInScene) {
-			if (mapObj = GameObject.FindObjectOfType<MapInfo> ().gameObject) {
-				readInfo ();
-				mapInScene = true;
-			}
+		if (mapObj = GameObject.FindObjectOfType<MapInfo> ().gameObject) {
+			readInfo ();
+			mapInScene = true;
 		}
 
-		if (placablePowerUps == null) {
+		if (placablePlatforms == null) {
+			placablePlatforms = new List<GameObject> ();
 			placablePowerUps = new List<GameObject> ();
 			placableWeapons = new List<GameObject> ();
-			Object[] placables = Resources.LoadAll ("PowerUps/");
+			Object[] placables = Resources.LoadAll ("Platforms/");
+			foreach (Object obj in placables) {
+				if (((GameObject)obj).GetComponent<PlatformController> () != null)
+					placablePlatforms.Add ((GameObject)obj);
+			}
+			placables = Resources.LoadAll ("PowerUps/");
 			foreach (Object obj in placables) {
 				if (((GameObject)obj).GetComponent<PickUpPower> () != null)
 					placablePowerUps.Add ((GameObject)obj);
@@ -65,25 +72,28 @@ public class MapEditor : EditorWindow {
 		mapInScene = false;
 		meme = false;
 		mapName = "Map";
+		platSnap = true;
+		platSnapSize = 1.0f;
 	}
 
 	private static void OnSceneGUI(SceneView sceneview)
 	{
-		Handles.BeginGUI();
+		Handles.BeginGUI ();
 
 		//if (GUILayout.Button("Press Me"))
 		//	Debug.Log("Got it to work.");
+		if (startLocation != null)
+			startLocation.position = Handles.PositionHandle (startLocation.position, Quaternion.identity);
 
-		if(meme)
-			GUI.Label (new Rect(Screen.width - 250, Screen.height - 250, 250, 250), Resources.Load("meme") as Texture);
+		if (meme)
+			GUI.Label (new Rect (Screen.width - 250, Screen.height - 250, 250, 250), Resources.Load ("meme") as Texture);
 
 
-		if (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform)
-		{
+		if (Event.current.type == EventType.DragUpdated || Event.current.type == EventType.DragPerform) {
 			DragAndDrop.visualMode = DragAndDropVisualMode.Copy; // show a drag-add icon on the mouse cursor
 
 			if (draggedObj == null)
-				draggedObj = (GameObject)Object.Instantiate(DragAndDrop.objectReferences[0]);
+				draggedObj = (GameObject)Object.Instantiate (DragAndDrop.objectReferences [0]);
 
 			Vector3 mousePos = Event.current.mousePosition;
 			mousePos.y = sceneview.camera.pixelHeight - mousePos.y;
@@ -91,21 +101,41 @@ public class MapEditor : EditorWindow {
 			mousePos.z = 0;
 			draggedObj.transform.position = mousePos;
 
-			if (Event.current.type == EventType.DragPerform)
-			{
-				DragAndDrop.AcceptDrag();
+			if (Event.current.type == EventType.DragPerform) {
+				DragAndDrop.AcceptDrag ();
 				Selection.activeGameObject = draggedObj;
 
-				if (draggedObj.GetComponent<PickUpPower> () || draggedObj.GetComponent<PickUpWeapon> ()) {
+				//Move the placed object into the correct location in the map hierarchy
+				if (draggedObj.GetComponent<PlatformController> ()) {
+					draggedObj.transform.SetParent (platforms);
+				} else if (draggedObj.GetComponent<PickUpPower> () || draggedObj.GetComponent<PickUpWeapon> ()) {
 					draggedObj.transform.SetParent (powerUps);
 				}
 
 				draggedObj = null;
 			}
 
-			Event.current.Use();
+			Event.current.Use ();
 		}
 
+
+		GameObject selected = Selection.activeGameObject;
+
+		if(selected) {
+			if (selected.GetComponent<PlatformController> () && platSnap) {
+				//Snap platform to grid
+				Bounds bounds = selected.GetComponent<BoxCollider2D>().bounds;
+				Vector3 pos = bounds.center - bounds.extents;
+				pos.x = Mathf.Round (pos.x / platSnapSize) * platSnapSize;
+				pos.y = Mathf.Round (pos.y / platSnapSize) * platSnapSize;
+				selected.transform.position = pos + bounds.extents;
+
+				Vector3 scale = selected.transform.localScale;
+				scale.x = Mathf.Round (scale.x / platSnapSize) * platSnapSize;
+				scale.y = Mathf.Round (scale.y / platSnapSize) * platSnapSize;
+				selected.transform.localScale = scale;
+			}
+		}
 		Handles.EndGUI();
 	}
 
@@ -114,22 +144,54 @@ public class MapEditor : EditorWindow {
 		GUILayout.Label ("Map Settings", EditorStyles.boldLabel);
 		mapName = EditorGUILayout.TextField ("Map Name", mapName);
 
-		if (!mapInScene) {
+		if (!mapInScene || mapInfo == null) {
 
 			if (GUILayout.Button ("Generate Map \"" + mapName + "\"")) {
 				mapInScene = createMap ();
 			}
 		}
 		else {
+			mapObj.name = mapName;
 
 			mapInfo.timeToFinish = EditorGUILayout.FloatField ("Time to Finish (sec)", mapInfo.timeToFinish);
 			mapInfo.mapMoney = EditorGUILayout.IntField ("Map Money", mapInfo.mapMoney);
+			if (startLocation != null) {
+				startLocation.position = EditorGUILayout.Vector3Field ("Start Location", startLocation.position);
+				endFlag.position = EditorGUILayout.Vector3Field ("End Flag Location", endFlag.position);
+			}
+			if (GUILayout.Button ("Save " + mapName + " as Prefab"))
+				saveAsPrefab ();
 
 			mousedOver = null;
 
-			GUILayout.Label ("PowerUps", EditorStyles.boldLabel);
-
+			EditorGUILayout.Separator ();
+			GUILayout.Label ("Platforms", EditorStyles.boldLabel);
 			//EditorGUILayout.BeginHorizontal ();
+
+			foreach (GameObject go in placablePlatforms) {
+				Texture goTex;
+				if (goTex = go.GetComponent<MeshRenderer>().sharedMaterial.mainTexture) {
+					GUIContent content = new GUIContent (go.name + " Platform", goTex);
+					GUILayout.Box (content);
+
+					//Check if this box was moused over
+					if (GUILayoutUtility.GetLastRect ().Contains (Event.current.mousePosition)) {
+						mousedOver = go;
+					}
+				}
+			}
+			//EditorGUILayout.EndHorizontal ();
+
+			platSnap = EditorGUILayout.BeginToggleGroup ("Snap to Grid", platSnap);
+			platSnapSize = EditorGUILayout.FloatField ("Snap Grid Size", platSnapSize);
+			if (platSnapSize <= 0)
+				platSnapSize = 0.03125f;
+			EditorGUILayout.EndToggleGroup ();
+
+			EditorGUILayout.Separator ();
+			GUILayout.Label ("PowerUps", EditorStyles.boldLabel);
+			//EditorGUILayout.BeginHorizontal ();
+
 			foreach (GameObject go in placablePowerUps) {
 				Texture goTex;
 				if (goTex = go.GetComponent<SpriteRenderer> ().sprite.texture) {
@@ -144,9 +206,10 @@ public class MapEditor : EditorWindow {
 			}
 			//EditorGUILayout.EndHorizontal ();
 
+			EditorGUILayout.Separator ();
 			GUILayout.Label ("Weapons", EditorStyles.boldLabel);
-
 			//EditorGUILayout.BeginHorizontal ();
+
 			foreach (GameObject go in placableWeapons) {
 				Texture goTex;
 				if (goTex = go.GetComponent<PickUpWeapon> ()
@@ -162,6 +225,7 @@ public class MapEditor : EditorWindow {
 			}
 			//EditorGUILayout.EndHorizontal ();
 
+			EditorGUILayout.Separator ();
 			if (meme = EditorGUILayout.Toggle ("Meme", meme)) {
 				SceneView.RepaintAll ();
 			}
@@ -233,5 +297,21 @@ public class MapEditor : EditorWindow {
 		mapObj.name = mapName;
 		mapInfo = mapObj.GetComponent<MapInfo> ();
 
+	}
+
+	void saveAsPrefab() {
+		//Set references where needed
+		mapInfo = mapObj.GetComponent<MapInfo> ();
+		mapInfo.startLocation = startLocation;
+		mapInfo.endFlag = endFlag.gameObject;
+		//Check if this map name exists already
+		if (Resources.Load ("Maps/" + mapName) as GameObject) {
+			bool result = EditorUtility.DisplayDialog ("Map Already Exists", "A map with this name already exists," +
+				" would you like to override it?", "OK", "Never Mind");
+			if (!result)
+				return;
+		}
+		PrefabUtility.CreatePrefab ("Assets/Prefabs/Resources/Maps/" + mapName+".prefab", mapObj, ReplacePrefabOptions.ReplaceNameBased);
+		EditorUtility.DisplayDialog ("Save Complete", "Map saved under Assets/Prefabs/Resources/Maps/" + mapName + ".prefab.", "OK");
 	}
 }
