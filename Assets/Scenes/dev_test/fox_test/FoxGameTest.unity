@@ -194,93 +194,100 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 026228ea4e133c54293065859b5747aa, type: 2}
   m_IsPrefabParent: 0
---- !u!1001 &1660825023
-Prefab:
+--- !u!1 &669064783
+GameObject:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0.04097438
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 9.5882635
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -9
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: player1Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: player1Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: player1Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: player2Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: player2Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: player2Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: creatorPrefab
-      value: 
-      objectReference: {fileID: 1000010480780328, guid: 3b006f30bfeb3d84b99a682def722039,
-        type: 2}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: playerPrefab
-      value: 
-      objectReference: {fileID: 1000013445529504, guid: 7a080c066c8efbd4d8081438da81ca2a,
-        type: 2}
-    - target: {fileID: 114000013129031816, guid: f9430460789848f4a9dacc611a4ce59b,
-        type: 2}
-      propertyPath: scoreboardCanvas
-      value: 
-      objectReference: {fileID: 1000011136449856, guid: c6580e5aee41d6947b3e4a2b0551324e,
-        type: 2}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: f9430460789848f4a9dacc611a4ce59b, type: 2}
-  m_IsPrefabParent: 0
+  m_PrefabParentObject: {fileID: 1000012249694660, guid: f9430460789848f4a9dacc611a4ce59b,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 669064784}
+  m_Layer: 0
+  m_Name: spawnedContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &669064784
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000012820585282, guid: f9430460789848f4a9dacc611a4ce59b,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 669064783}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 1375835082}
+  m_RootOrder: 0
+--- !u!1 &1375835080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1000012679303794, guid: f9430460789848f4a9dacc611a4ce59b,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1375835082}
+  - 114: {fileID: 1375835083}
+  m_Layer: 0
+  m_Name: Game
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1375835082
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4000011060492498, guid: f9430460789848f4a9dacc611a4ce59b,
+    type: 2}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1375835080}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.04097438, y: 9.5882635, z: -9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 669064784}
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+--- !u!114 &1375835083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1375835080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecdaecb0f78b55e4ead3f0ecee9ded41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRounds: 0
+  phaseSwitchMessages:
+  - Time's Up!
+  - Get Ready...
+  - 3
+  - 2
+  - 1
+  - Go!
+  phaseSwitchTimes:
+  - 1
+  - 2
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  scoreboardCanvas: {fileID: 1000011136449856, guid: c6580e5aee41d6947b3e4a2b0551324e,
+    type: 2}
+  creatorPrefab: {fileID: 1000010480780328, guid: 3b006f30bfeb3d84b99a682def722039,
+    type: 2}
+  playerPrefab: {fileID: 1000013445529504, guid: 7a080c066c8efbd4d8081438da81ca2a,
+    type: 2}
+  player1Color: {r: 0, g: 0.8758622, b: 1, a: 0}
+  player2Color: {r: 0, g: 1, b: 0.2965517, a: 0}
+  spawnedContainer: {fileID: 0}
