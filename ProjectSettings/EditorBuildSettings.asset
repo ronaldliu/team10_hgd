@@ -4,16 +4,4 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-  - enabled: 1
-    path: Assets/Scenes/FinalGame.unity
-  - enabled: 1
-    path: Assets/Scenes/dev_test/fox_test/MainMenuTest.unity
-  - enabled: 1
-    path: Assets/Scenes/dev_test/fox_test/FoxGameTest.unity
-  - enabled: 1
-    path: Assets/Scenes/dev_test/fox_test/CharacterSelectionTest.unity
-  - enabled: 1
-    path: Assets/Scenes/CharacterSelection.unity
+  m_Scenes: []

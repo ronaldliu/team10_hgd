@@ -156,7 +156,7 @@ public class GameDebugController : MonoBehaviour
 
 	public void generateMap(int mapNo)
 	{
-		string mapPath = "Map" + mapNo;
+		string mapPath = "Maps/Map" + mapNo;
 		mapContainer = Instantiate(Resources.Load(mapPath, typeof(GameObject))) as GameObject;
 		mapinfo = mapContainer.GetComponent<MapInfo>();
 	}
