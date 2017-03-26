@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
-public class GameController : MonoBehaviour
+public class GC2 : MonoBehaviour
 {
 
 	private float countdownTimer;
@@ -16,8 +16,7 @@ public class GameController : MonoBehaviour
 
 	public int maxRounds;
 
-	public static int winScore = 0;
-	private int[] scores = {0, 0};
+	private int[] scores = { 0, 0 };
 	private int currPlayer;
 	private int currCreator;
 	//Increase this for a longer Creator phase
@@ -81,10 +80,18 @@ public class GameController : MonoBehaviour
 		scoreboardCanvas = Instantiate(scoreboardCanvas);
 		scoreboard = scoreboardCanvas.transform.FindChild("Scoreboard").GetComponent<Scoreboard>();
 		scoreboardCanvas.SetActive(false);
-
 		PlayerColorHolder ColorManager = GameObject.Find ("ColorHolder").GetComponent<PlayerColorHolder> ();
 		player1Color = ColorManager.player1Color;
 		player2Color = ColorManager.player2Color;
+
+		//SpriteRenderer SprRen = new SpriteRenderer ();
+		//SprRen.sprite = scoreboardSprites [0];
+		//SprRen.color = player1Color;
+		//SpriteRenderer SprRen2 = new SpriteRenderer ();
+		//SprRen2.sprite = scoreboardSprites [1];
+		//SprRen2.color = player2Color;
+
+
 	}
 
 	void Update() {
@@ -122,6 +129,9 @@ public class GameController : MonoBehaviour
 					}
 				}
 				creator.ui.updateTimers(timeText);
+				// creator creatorContainer creatorUI creatorPrefab
+
+				//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
 
 				if (timer <= 0 || creator.money <= 0)
 				{
@@ -176,6 +186,7 @@ public class GameController : MonoBehaviour
 						timer = phaseSwitchTimes[phaseSwitchState];
 					}
 				}
+
 				break;
 			}
 		case 2: //Player
@@ -185,13 +196,16 @@ public class GameController : MonoBehaviour
 					foreach (SpriteRenderer ob in playerSprites) {
 						Debug.Log (ob.name);
 						if (currPlayer == 0) {
+							//creatorRenderer.color = player1Color;
 							PlayerController playerController = player.GetComponent<PlayerController> ();
 							playerController.defaultColor = new Color (player1Color.r, player1Color.g, player1Color.b);
 							ob.color = new Color(player1Color.r, player1Color.g, player1Color.b);
 						} else {
+							//creatorRenderer.color = player2Color;
 							PlayerController playerController = player.GetComponent<PlayerController> ();
 							playerController.defaultColor = new Color(player2Color.r, player2Color.g, player2Color.b);
 							ob.color = new Color(player2Color.r, player2Color.g, player2Color.b);
+							//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
 						}
 					}
 					roundStarted = true;
@@ -283,6 +297,17 @@ public class GameController : MonoBehaviour
 					playerReachedEnd = false;
 					roundStarted = false;
 				}
+				else if (player.currentHealth <= 0)
+				{
+					player.resetHealthOfPlayer();
+
+					// Position player at start
+					Vector3 tempPos = mapinfo.startLocation.transform.position;
+					tempPos.z = player.transform.position.z;
+					player.transform.position = tempPos;
+					scores[currPlayer] -= 100;
+					scores[currCreator] += 100;
+				}
 				break;
 			}
 		case 3:
@@ -312,9 +337,12 @@ public class GameController : MonoBehaviour
 					creator.transform.position = tempPos;
 
 					if (currCreator == 0) {
+						//creatorRenderer.color = player1Color;
 						creatorRenderer.color = new Color(player1Color.r, player1Color.g, player1Color.b);
 					} else {
+						//creatorRenderer.color = player2Color;
 						creatorRenderer.color = new Color(player2Color.r, player2Color.g, player2Color.b);
+						//creatorRenderer.color = new Color(0f, 0f, 0f, 1f);
 					}
 
 					camera.setFollowing(creator.gameObject);
@@ -324,19 +352,16 @@ public class GameController : MonoBehaviour
 			}
 		case 4: // END GAME
 			{
-				if (scores [0] < scores [1]) {
-					scoreboard.setLoser (0);
-					winScore = scores [1];
-				} else if (scores [1] < scores [0]) {
-					scoreboard.setLoser (1);
-					winScore = scores [0];
-				}
+				if (scores[0] < scores[1])
+					scoreboard.setLoser(0);
+				else if (scores[1] < scores[0])
+					scoreboard.setLoser(1);
 				else
-					scoreboard.setLoser (3);
-
-				// Look for possible new high score:
-				if (Input.GetButtonDown ("A_1") || Input.GetButtonDown ("A_2")) {
-					SceneManager.LoadScene ("InputName");
+					scoreboard.setLoser(3);
+				
+				if (Input.GetButtonDown("A_1") || Input.GetButtonDown("A_2"))
+				{
+					SceneManager.LoadScene("MainMenu");	
 				}
 				break;
 			}
@@ -361,7 +386,13 @@ public class GameController : MonoBehaviour
 		playerContainer = Instantiate(playerPrefab).transform;
 		player = playerContainer.Find("PlayerEnt").GetComponent<PlayerController>();
 		playerUI = playerContainer.Find("PlayerUI").GetComponent<PlayerHud>();
+		//get components in children
 		playerSprites = player.gameObject.GetComponentsInChildren<SpriteRenderer>();
+		/*
+		 * foreach (SpriteRenderer ob in playerSprites) {
+			Debug.Log (ob.name);
+		}
+		*/
 		camera.setFollowing(player.gameObject);
 
 		if (Input.GetJoystickNames().Length > 1)
@@ -404,18 +435,6 @@ public class GameController : MonoBehaviour
 			powerUp.gameObject.SetActive(true);
 	}
 
-	public void respawnPlayer()
-	{
-		player.resetHealthOfPlayer();
-
-		// Position player at start
-		Vector3 tempPos = mapinfo.startLocation.transform.position;
-		tempPos.z = player.transform.position.z;
-		player.transform.position = tempPos;
-		scores[currPlayer] -= 100;
-		scores[currCreator] += 100;
-	}
-
 	public void applyGameObject(GameObject child)
 	{
 		child.transform.SetParent(spawnedContainer.transform);
@@ -424,7 +443,7 @@ public class GameController : MonoBehaviour
 	public void generateMap()
 	{
 		string rnd = Random.Range(1, 4).ToString();
-		string mapPath = "Maps/Map" + rnd;
+		string mapPath = "Map" + rnd;
 		mapContainer = Instantiate(Resources.Load(mapPath, typeof(GameObject))) as GameObject;
 		mapinfo = mapContainer.GetComponent<MapInfo>();
 	}
