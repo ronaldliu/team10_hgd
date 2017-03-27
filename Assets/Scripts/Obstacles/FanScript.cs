@@ -26,7 +26,7 @@ public class FanScript : MonoBehaviour {
 		points [1] = new Vector2 (halfWA, 0);
 		points [2] = new Vector2 (-halfWA, 0);
 		points [3] = new Vector2 (-halfWA, heightA);
-		double distanceOffset = (double)width / (double)this.numberOfPoints;
+		float distanceOffset = ((float)width / (float)this.numberOfPoints) / ppu;
 		Quaternion rotation = transform.localRotation;
 		PolygonCollider2D coll = this.GetComponent<PolygonCollider2D> ();
 		for (int i = 0; i < this.numberOfPoints; i++) {
