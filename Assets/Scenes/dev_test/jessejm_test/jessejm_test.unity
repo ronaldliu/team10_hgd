@@ -867,7 +867,7 @@ Prefab:
     - target: {fileID: 114000012788507130, guid: 6e9e21e097122034d92a77ed074be5c1,
         type: 2}
       propertyPath: phase
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6e9e21e097122034d92a77ed074be5c1, type: 2}
