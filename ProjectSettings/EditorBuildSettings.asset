@@ -4,4 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/CharacterSelection.unity
+  - enabled: 1
+    path: Assets/Scenes/FinalGame.unity
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+  - enabled: 1
+    path: Assets/Scenes/Leaderboard.unity
+  - enabled: 1
+    path: Assets/Scenes/InputName.unity
