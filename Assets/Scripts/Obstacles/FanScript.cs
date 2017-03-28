@@ -39,7 +39,7 @@ public class FanScript : MonoBehaviour {
 			//RaycastHit2D hit = Physics2D.Raycast (new Vector2(-halfWA + this.gameObject.transform.position.x + i * distanceOffset, this.gameObject.transform.position.y),/* rotation * */ this.gameObject.transform.up, this.effectDistance, this.stopsFan);
 			RaycastHit2D hit = Physics2D.Raycast (this.gameObject.transform.TransformPoint(rayPosInLocal), this.gameObject.transform.up, this.effectDistance, this.stopsFan);
 			float hitDis = hit.distance;
-			if (hitDis == 0)
+			if (hitDis == 0 && hit.transform == null)
 				hitDis = this.effectDistance;
 			//Debug.Log ("hitscan " + i + ": setting distance = " + hitDis);
 			points [4 + i] = new Vector2(-halfWA + i * distanceOffset, hitDis + halfHA);
