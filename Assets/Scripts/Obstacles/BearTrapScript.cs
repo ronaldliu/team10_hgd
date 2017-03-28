@@ -52,7 +52,7 @@ public class BearTrapScript : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D coll) {
-		print ("You hit the bearTrap");
+		//print ("You hit the bearTrap");
 		if (!triggered) {
 			stuckTimeLeft = secondHoldTime;
 			playerRef = coll.gameObject;

@@ -26,7 +26,7 @@ public class ExplodableObj : MonoBehaviour {
 			//add the force
 			Vector3 calc = (c.gameObject.transform.position - this.gameObject.transform.position);
 			calc.z = 0f;
-			print( "applying explosion force to " + c.gameObject.name + ". The force appied is: " + calc);
+			//print( "applying explosion force to " + c.gameObject.name + ". The force appied is: " + calc);
 			phy.AddForce (calc * this.force, ForceMode2D.Impulse);
 		}
 	}
