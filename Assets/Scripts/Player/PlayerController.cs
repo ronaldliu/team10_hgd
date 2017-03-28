@@ -235,9 +235,12 @@ public class PlayerController: MonoBehaviour {
 
 	public void respawn() {
 		//Respawn the player if possible
-		GameObject game;
+		GameObject game, debug;
 		if (game = GameObject.Find ("Game")) {
-			game.GetComponent<GameController>().respawnPlayer ();
+			game.GetComponent<GameController> ().respawnPlayer ();
+			isDead = false;
+		} else if (debug = GameObject.Find ("GameDebug")) {
+			debug.GetComponent<GameDebugController> ().respawnPlayer ();
 			isDead = false;
 		}
 	}

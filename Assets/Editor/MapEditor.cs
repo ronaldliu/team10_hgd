@@ -159,6 +159,8 @@ public class MapEditor : EditorWindow {
 				startLocation.position = EditorGUILayout.Vector3Field ("Start Location", startLocation.position);
 				endFlag.position = EditorGUILayout.Vector3Field ("End Flag Location", endFlag.position);
 			}
+			if (GUILayout.Button ("Readjust \"Out of Bounds\" Object"))
+				readjustOOB ();
 			if (GUILayout.Button ("Save " + mapName + " as Prefab"))
 				saveAsPrefab ();
 
@@ -249,6 +251,27 @@ public class MapEditor : EditorWindow {
 		}
 	}
 
+	void readjustOOB() {
+		float mostLeft = 0;
+		float mostRight = 0;
+		float mostDown = 0;
+
+		foreach (BoxCollider2D box in platforms.GetComponentsInChildren<BoxCollider2D>()) {
+			Bounds b = box.bounds;
+			if (b.center.x - b.extents.x < mostLeft)
+				mostLeft = b.center.x - b.extents.x;
+			if (b.center.x + b.extents.x > mostRight)
+				mostRight = b.center.x + b.extents.x;
+			if (b.center.y - b.extents.y < mostDown)
+				mostDown = b.center.y - b.extents.y;
+		}
+		//Readjust the bounds to be underneath every platform
+		GameObject boundObj = outOfBounds.Find("Bound").gameObject;
+		boundObj.transform.position = new Vector3 (((mostRight - mostLeft) / 2)+mostLeft, mostDown - 20, 0);
+		boundObj.transform.localScale = new Vector3 (mostRight - mostLeft + 400, 7, 1);
+		Selection.activeGameObject = boundObj;
+	}
+
 	//Returns whether the map was created or not
 	bool createMap() {
 		//Check if this map name exists already
@@ -258,9 +281,9 @@ public class MapEditor : EditorWindow {
 			if (!result)
 				return false;
 			else {
-				//TODO
-				//Load existing map
-				return false;
+				mapObj = Instantiate (Resources.Load ("Maps/" + mapName) as GameObject);
+				readInfo ();
+				return true;
 			}
 		}
 
@@ -292,14 +315,9 @@ public class MapEditor : EditorWindow {
 
 	}
 
-	//Push MapInfo to mapObj
-	void WriteInfo() {
-		mapObj.name = mapName;
-		mapInfo = mapObj.GetComponent<MapInfo> ();
-
-	}
-
 	void saveAsPrefab() {
+		//Update OOB
+		readjustOOB();
 		//Set references where needed
 		mapInfo = mapObj.GetComponent<MapInfo> ();
 		mapInfo.startLocation = startLocation;
