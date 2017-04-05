@@ -45,6 +45,11 @@ public class GameDebugController : MonoBehaviour
 		if (!mapinfo) {
 			mapinfo = GameObject.FindObjectOfType<MapInfo> ();
 			mapContainer = mapinfo.gameObject;
+
+			// Read the level colors
+			camera.GetComponent<Camera>().backgroundColor = mapinfo.backColor;
+			camera.transform.Find("Back").GetComponentInChildren<ParticleSystem> ().startColor = mapinfo.particleColor1;
+			camera.transform.Find("Back2").GetComponentInChildren<ParticleSystem> ().startColor = mapinfo.particleColor2;
 		}
 
 		if (!mapContainer && shouldGenerateMap)
