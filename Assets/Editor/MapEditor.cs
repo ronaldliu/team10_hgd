@@ -20,8 +20,8 @@ public class MapEditor : EditorWindow {
 	public static bool meme;
 
 	//Map references
-	GameObject mapObj;
-	MapInfo mapInfo;
+	public static GameObject mapObj;
+	public static MapInfo mapInfo;
 
 	//Map Info
 	string mapName;
@@ -82,6 +82,14 @@ public class MapEditor : EditorWindow {
 
 		//if (GUILayout.Button("Press Me"))
 		//	Debug.Log("Got it to work.");
+
+		if (mapInfo) {
+			// Read the level colors
+			Camera.main.backgroundColor = mapInfo.backColor;
+			Camera.main.transform.Find("Back").GetComponentInChildren<ParticleSystem> ().startColor = mapInfo.particleColor1;
+			Camera.main.transform.Find("Back2").GetComponentInChildren<ParticleSystem> ().startColor = mapInfo.particleColor2;
+		}
+
 		if (startLocation != null)
 			startLocation.position = Handles.PositionHandle (startLocation.position, Quaternion.identity);
 
@@ -159,6 +167,9 @@ public class MapEditor : EditorWindow {
 				startLocation.position = EditorGUILayout.Vector3Field ("Start Location", startLocation.position);
 				endFlag.position = EditorGUILayout.Vector3Field ("End Flag Location", endFlag.position);
 			}
+			mapInfo.backColor = EditorGUILayout.ColorField ("Background Color", mapInfo.backColor);
+			mapInfo.particleColor1 = EditorGUILayout.ColorField ("Particle Color 1", mapInfo.particleColor1);
+			mapInfo.particleColor2 = EditorGUILayout.ColorField ("Particle Color 2", mapInfo.particleColor2);
 			if (GUILayout.Button ("Readjust \"Out of Bounds\" Object"))
 				readjustOOB ();
 			if (GUILayout.Button ("Save " + mapName + " as Prefab"))
