@@ -11,6 +11,7 @@ public class MapEditor : EditorWindow {
 	List<GameObject> placableWeapons;
 	GameObject mousedOver;
 
+	static bool platPass;
 	static bool platSnap;
 	static float platSnapSize;
 	static GameObject draggedObj;
@@ -72,6 +73,7 @@ public class MapEditor : EditorWindow {
 		mapInScene = false;
 		meme = false;
 		mapName = "Map";
+		platPass = false;
 		platSnap = true;
 		platSnapSize = 1.0f;
 	}
@@ -116,6 +118,11 @@ public class MapEditor : EditorWindow {
 				//Move the placed object into the correct location in the map hierarchy
 				if (draggedObj.GetComponent<PlatformController> ()) {
 					draggedObj.transform.SetParent (platforms);
+
+					if (platPass) {
+						draggedObj.AddComponent<PlatformEffector2D> ();
+						draggedObj.GetComponent<BoxCollider2D> ().usedByEffector = true;
+					}
 				} else if (draggedObj.GetComponent<PickUpPower> () || draggedObj.GetComponent<PickUpWeapon> ()) {
 					draggedObj.transform.SetParent (powerUps);
 				}
@@ -179,12 +186,13 @@ public class MapEditor : EditorWindow {
 
 			EditorGUILayout.Separator ();
 			GUILayout.Label ("Platforms", EditorStyles.boldLabel);
-			//EditorGUILayout.BeginHorizontal ();
 
-			foreach (GameObject go in placablePlatforms) {
+			EditorGUILayout.BeginHorizontal ();
+			for (int i = 0; i < placablePlatforms.Count; i++) {
+				GameObject go = placablePlatforms [i];
 				Texture goTex;
 				if (goTex = go.GetComponent<MeshRenderer>().sharedMaterial.mainTexture) {
-					GUIContent content = new GUIContent (go.name + " Platform", goTex);
+					GUIContent content = new GUIContent (goTex);
 					GUILayout.Box (content);
 
 					//Check if this box was moused over
@@ -192,9 +200,16 @@ public class MapEditor : EditorWindow {
 						mousedOver = go;
 					}
 				}
-			}
-			//EditorGUILayout.EndHorizontal ();
 
+				//Start a new line for the dynamic platforms
+				if (i == 5) {
+					EditorGUILayout.EndHorizontal ();
+					EditorGUILayout.BeginHorizontal ();
+				}
+			}
+			EditorGUILayout.EndHorizontal ();
+
+			platPass = EditorGUILayout.ToggleLeft("Can Pass Underneath?", platPass);
 			platSnap = EditorGUILayout.BeginToggleGroup ("Snap to Grid", platSnap);
 			platSnapSize = EditorGUILayout.FloatField ("Snap Grid Size", platSnapSize);
 			if (platSnapSize <= 0)
