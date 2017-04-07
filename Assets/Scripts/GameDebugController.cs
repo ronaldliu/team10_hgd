@@ -10,7 +10,7 @@ public class GameDebugController : MonoBehaviour
 	public Phase phase;
 	public bool useMoneyFromMap = false;
 	public bool shouldGenerateMap = false;
-	public int mapToGenerate = 0;
+	public string mapToGenerate = "Map0";
 
 	public GameObject creatorPrefab;
 	public GameObject playerPrefab;
@@ -180,9 +180,9 @@ public class GameDebugController : MonoBehaviour
 		child.transform.SetParent(spawnedContainer.transform);
 	}
 
-	public void generateMap(int mapNo)
+	public void generateMap(string mapName)
 	{
-		string mapPath = "Maps/Map" + mapNo;
+		string mapPath = "Maps/" + mapName;
 		mapContainer = Instantiate(Resources.Load(mapPath, typeof(GameObject))) as GameObject;
 		mapinfo = mapContainer.GetComponent<MapInfo>();
 	}
