@@ -2,17 +2,14 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class CharacterMenu : MonoBehaviour {
-	public int current;
+public class SettingsMenu : MonoBehaviour {
+	
 	public GameObject[] characters;
 	public GameObject[] CharBG;
 	public Color[] availColors;
-	//public Sprite[] characterSprite;
-	//public Sprite[] characterBackground;
 	public int[] selected;
 	public int numControllers;
 
-	GC2 gameController;
 	GameObject PressA;
 	bool[] canInteract;
 	bool loadNextScene;
@@ -24,7 +21,6 @@ public class CharacterMenu : MonoBehaviour {
 		selected = new int[joysticks.Length];
 		canInteract = new bool[] { true, true };
 		selected = new int[] { 0, 0 };
-		//gameController = GameObject.Find ("Game");
 		PressA = GameObject.Find ("PressAtoPlay");
 		PressA.GetComponent<SpriteRenderer> ().color = Color.clear;
 		loadNextScene = false;
@@ -50,7 +46,7 @@ public class CharacterMenu : MonoBehaviour {
 					gameController.GetComponent<GC2>().player2Color = new Color(availColors [selected [1]].r, availColors [selected [1]].g, availColors [selected [1]].b, 1f);
 					Debug.Log ("Ran.");
 					*/
-					PlayerColorHolder plh = GameObject.Find ("ColorHolder").GetComponent<PlayerColorHolder> ();
+					MatchSettingsHolder plh = GameObject.Find ("ColorHolder").GetComponent<MatchSettingsHolder> ();
 					plh.player1Color = new Color(availColors [selected [0]].r, availColors [selected [0]].g, availColors [selected [0]].b, 1f);
 					plh.player2Color = new Color(availColors [selected [1]].r, availColors [selected [1]].g, availColors [selected [1]].b, 1f);
 					SceneManager.LoadScene ("FinalGame");
