@@ -21,7 +21,7 @@ GameObject:
   - 4: {fileID: 4000011469404252}
   - 114: {fileID: 114000010840921084}
   m_Layer: 0
-  m_Name: LameMap
+  m_Name: ~LameMap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
