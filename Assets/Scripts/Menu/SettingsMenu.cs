@@ -1,85 +1,164 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SettingsMenu : MonoBehaviour {
-	
+
 	public GameObject[] characters;
 	public GameObject[] CharBG;
 	public Color[] availColors;
-	public int[] selected;
+	public int[] colorSelected;
 	public int numControllers;
 
-	GameObject PressA;
-	bool[] canInteract;
-	bool loadNextScene;
+	public Sprite b_lb;
+	public Sprite b_rb;
+	public Sprite b_x;
+	public Sprite b_y;
+
+	int selected = 0;
+	bool canInteract;
+	bool twoControllers;
+	int rounds;
+	bool randomMap;
+
+	Text controllerText;
+	Text roundText;
+	Text mapText;
 	float limiter = 0;
 
 	void Start()
 	{
 		string[] joysticks = Input.GetJoystickNames ();
-		selected = new int[joysticks.Length];
-		canInteract = new bool[] { true, true };
-		selected = new int[] { 0, 0 };
-		PressA = GameObject.Find ("PressAtoPlay");
-		PressA.GetComponent<SpriteRenderer> ().color = Color.clear;
-		loadNextScene = false;
+		colorSelected = new int[joysticks.Length];
+		canInteract = true;
+		twoControllers = true;
+		rounds = 3;
+		randomMap = false;
+		colorSelected = new int[] { 0, 0 };
+		controllerText = GameObject.Find ("ControllerText").GetComponent<Text> ();
+		roundText = GameObject.Find ("RoundText").GetComponent<Text> ();
+		mapText = GameObject.Find ("MapText").GetComponent<Text> ();
 	}
 
 	void Update()
 	{
-		float input;
-		for (int i = 0; i < numControllers; i++) {
-			input = Input.GetAxisRaw ("L_XAxis_" + (i + 1));
-			if (input != 0 && canInteract[i]) {
-				canInteract[i] = false;
-				StartCoroutine (SelectionChange (input, i));
-			}
-			if (Input.GetButtonDown("A_" + (i+1)))
-			{
-				if (loadNextScene == true) {	
-					/*
-					Debug.Log ("Ran.");
-					gameController = GameObject.Find ("Game").GetComponent<GC2>();
-					gameController.GetComponent<GC2>().player1Color = new Color(availColors [selected [0]].r, availColors [selected [0]].g, availColors [selected [0]].b, 1f);
-					Debug.Log ("Ran.");
-					gameController.GetComponent<GC2>().player2Color = new Color(availColors [selected [1]].r, availColors [selected [1]].g, availColors [selected [1]].b, 1f);
-					Debug.Log ("Ran.");
-					*/
-					MatchSettingsHolder plh = GameObject.Find ("ColorHolder").GetComponent<MatchSettingsHolder> ();
-					plh.player1Color = new Color(availColors [selected [0]].r, availColors [selected [0]].g, availColors [selected [0]].b, 1f);
-					plh.player2Color = new Color(availColors [selected [1]].r, availColors [selected [1]].g, availColors [selected [1]].b, 1f);
-					SceneManager.LoadScene ("FinalGame");
+		float leftX = Input.GetAxisRaw ("L_XAxis_1");
+		float leftY = Input.GetAxisRaw ("L_YAxis_1");
+		if ((leftX != 0 || leftY != 0) && canInteract) {
+			canInteract = false;
+			StartCoroutine (SelectionChange (leftX, leftY));
+		}
 
-				} else {
-					PressA.GetComponent<SpriteRenderer> ().color = Color.white;
-					loadNextScene = true;
-				}
+		if (Input.GetButtonDown ("RB_1")) {
+			if (colorSelected[0] < availColors.Length - 1) {
+				colorSelected[0]++;
 			}
 		}
+		if (Input.GetButtonDown ("LB_1")) {
+			if (colorSelected[0] > 0) {
+				colorSelected[0]--;
+			}
+		}
+		if (Input.GetButtonDown ("RB_2") || (!twoControllers && Input.GetButtonDown ("Y_1"))) {
+			if (colorSelected[1] < availColors.Length - 1) {
+				colorSelected[1]++;
+			}
+		}
+		if (Input.GetButtonDown ("LB_2") || (!twoControllers && Input.GetButtonDown ("X_1"))) {
+			if (colorSelected[1] > 0) {
+				colorSelected[1]--;
+			}
+		}
+		UpdateCharacters ();
+
+
+		if (Input.GetButtonDown ("A_1")) {
+			MatchSettingsHolder msh = GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ();
+			msh.player1Color = new Color(availColors [colorSelected [0]].r, availColors [colorSelected [0]].g, availColors [colorSelected [0]].b, 1f);
+			msh.player2Color = new Color(availColors [colorSelected [1]].r, availColors [colorSelected [1]].g, availColors [colorSelected [1]].b, 1f);
+			msh.useTwoControllers = twoControllers;
+			msh.rounds = rounds;
+			msh.randomMaps = randomMap;
+			SceneManager.LoadScene ("FinalGame");
+		}
+
 	}
 
 	void UpdateCharacters()
 	{
 		for (int i = 0; i < numControllers; i++) 
 		{
-			characters [i].GetComponent<SpriteRenderer> ().color = new Color(availColors [selected [i]].r, availColors [selected [i]].g, availColors [selected [i]].b, 1f);
-			CharBG [i].GetComponent<SpriteRenderer> ().color = new Color(availColors [selected [i]].r, availColors [selected [i]].g, availColors [selected [i]].b, 0.25f);
+			characters [i].GetComponent<SpriteRenderer> ().color = new Color(availColors [colorSelected [i]].r, availColors [colorSelected [i]].g, availColors [colorSelected [i]].b, 1f);
+			CharBG [i].GetComponent<SpriteRenderer> ().color = new Color(availColors [colorSelected [i]].r, availColors [colorSelected [i]].g, availColors [colorSelected [i]].b, 0.25f);
 		}
 	}
 
-	IEnumerator SelectionChange(float input, int controller)
+	IEnumerator SelectionChange(float xAxis, float yAxis)
 	{
-		loadNextScene = false;
-
-		if (input > 0 && selected[controller] < availColors.Length - 1) {
-			selected[controller]++;
-		} else if (input < 0 && selected[controller] > 0) {
-			selected[controller]--;
+		if (yAxis > 0) {
+			selected++;
+			if (selected >= 3)
+				selected = 0;
+		}
+		if (yAxis < 0) {
+			selected--;
+			if (selected <= -1)
+				selected = 2;
 		}
 
-		UpdateCharacters ();
+		switch (selected) {
+		case 0:
+			controllerText.color = Color.green;
+			roundText.color = Color.white;
+			mapText.color = Color.white;
+
+			if (xAxis != 0)
+				twoControllers = !twoControllers;
+			
+			if (twoControllers) {
+				controllerText.text = "< Two Controllers >";
+				GameObject.Find ("MoveLeft 2").GetComponent<SpriteRenderer> ().sprite = b_lb;
+				GameObject.Find ("MoveRight 2").GetComponent<SpriteRenderer> ().sprite = b_rb;
+			} else {
+				controllerText.text = "< Pass One Controller >";
+				GameObject.Find ("MoveLeft 2").GetComponent<SpriteRenderer> ().sprite = b_x;
+				GameObject.Find ("MoveRight 2").GetComponent<SpriteRenderer> ().sprite = b_y;
+			}
+			break;
+		case 1:
+			controllerText.color = Color.white;
+			roundText.color = Color.green;
+			mapText.color = Color.white;
+
+			if (xAxis > 0) {
+				rounds++;
+				if (rounds > 10)
+					rounds = 1;
+			}
+			if (xAxis < 0) {
+				rounds--;
+				if (rounds < 1)
+					rounds = 10;
+			}
+			roundText.text = "< " + rounds + " >";
+			break;
+		case 2:
+			controllerText.color = Color.white;
+			roundText.color = Color.white;
+			mapText.color = Color.green;
+
+			if (xAxis != 0)
+				randomMap = !randomMap;
+
+			if (randomMap)
+				mapText.text = "< Random >";
+			else
+				mapText.text = "< Select >";
+			break;
+		}
+
 		yield return new WaitForSeconds (0.2f);
-		canInteract[controller] = true;
+		canInteract = true;
 	}
 }

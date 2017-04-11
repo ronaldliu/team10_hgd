@@ -14,8 +14,6 @@ public class GameController : MonoBehaviour
 	// public int whoIsPlayer;
 	// public int whoIsCreator;
 
-	public int maxRounds;
-
 	public static int winScore = 0;
 	private int[] scores = {0, 0};
 	private int currPlayer;
@@ -51,6 +49,9 @@ public class GameController : MonoBehaviour
 
 	public Color player1Color;
 	public Color player2Color;
+	public bool twoControllers;
+	public int maxRounds;
+	public bool randomMaps;
 
 	public GameObject spawnedContainer;
 
@@ -82,9 +83,12 @@ public class GameController : MonoBehaviour
 		scoreboard = scoreboardCanvas.transform.FindChild("Scoreboard").GetComponent<Scoreboard>();
 		scoreboardCanvas.SetActive(false);
 
-		MatchSettingsHolder SettingsManager = GameObject.Find ("ColorHolder").GetComponent<MatchSettingsHolder> ();
+		MatchSettingsHolder SettingsManager = GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ();
 		player1Color = SettingsManager.player1Color;
 		player2Color = SettingsManager.player2Color;
+		twoControllers = SettingsManager.useTwoControllers;
+		maxRounds = SettingsManager.rounds;
+		randomMaps = SettingsManager.randomMaps;
 	}
 
 	void Update() {
