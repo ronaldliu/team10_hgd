@@ -94,12 +94,12 @@ public class GameController : MonoBehaviour
 		menuSource = GameObject.Find ("MenuMusic").GetComponent<AudioSource>();
 		startMusic = true;
 		//createSource.Play();
-		//AudioSource temp = GameObject.Find ("BackgroundMusic").GetComponent<AudioSource>();
-		//temp.Stop ();
+		AudioSource temp = GameObject.Find ("BackgroundMusic").GetComponent<AudioSource>();
+		temp.Stop ();
 
-		//PlayerColorHolder ColorManager = GameObject.Find ("ColorHolder").GetComponent<PlayerColorHolder> ();
-		//player1Color = ColorManager.player1Color;
-		//player2Color = ColorManager.player2Color;
+		PlayerColorHolder ColorManager = GameObject.Find ("ColorHolder").GetComponent<PlayerColorHolder> ();
+		player1Color = ColorManager.player1Color;
+		player2Color = ColorManager.player2Color;
 
 	}
 
