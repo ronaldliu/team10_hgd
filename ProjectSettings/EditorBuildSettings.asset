@@ -17,3 +17,5 @@ EditorBuildSettings:
     path: Assets/Scenes/InputName.unity
   - enabled: 1
     path: Assets/Scenes/MatchSettings.unity
+  - enabled: 1
+    path: Assets/Scenes/wwkent_test.unity
