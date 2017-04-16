@@ -114,7 +114,7 @@ public class GameController : MonoBehaviour
 			{
 				//start music
 				if (startMusic) {
-					menuSource.Stop();
+					menuSource.Pause();
 					createSource.Play();
 					startMusic = false;
 				}
@@ -170,7 +170,7 @@ public class GameController : MonoBehaviour
 			{
 				//music handling
 				if (startMusic) {
-					createSource.Stop();
+					createSource.Pause();
 					menuSource.Play();
 					startMusic = false;
 				}
@@ -216,7 +216,7 @@ public class GameController : MonoBehaviour
 			{
 				//start music
 				if (startMusic) {
-					menuSource.Stop();
+					menuSource.Pause();
 					runnerSource.Play();
 					startMusic = false;
 				}
@@ -332,7 +332,7 @@ public class GameController : MonoBehaviour
 			{
 				//start music
 				if (startMusic) {
-					runnerSource.Stop();
+					runnerSource.Pause();
 					menuSource.Play();
 					startMusic = false;
 				}
