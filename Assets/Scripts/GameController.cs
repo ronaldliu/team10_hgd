@@ -60,9 +60,9 @@ public class GameController : MonoBehaviour
 
 	new private DynamicCamera camera;
 
-	public AudioSource createSource;
-	public AudioSource runnerSource;
-	public AudioSource menuSource;
+	//public AudioSource createSource;
+	//public AudioSource runnerSource;
+	//public AudioSource menuSource;
 	private bool startMusic;
 
 	//New keywords is used to hide the default Unity camera keyword for this one.
@@ -93,13 +93,16 @@ public class GameController : MonoBehaviour
 		player1Color = SettingsManager.player1Color;
 		player2Color = SettingsManager.player2Color;
 		twoControllers = SettingsManager.useTwoControllers;
+
 		maxRounds = SettingsManager.rounds;
 		randomMaps = SettingsManager.randomMaps;
 		
 		//set up music objects
+		/*
 		createSource = GameObject.Find ("CreatorMusic").GetComponent<AudioSource>();
 		runnerSource = GameObject.Find ("PlayerMusic").GetComponent<AudioSource>();
 		menuSource = GameObject.Find ("MenuMusic").GetComponent<AudioSource>();
+		*/
 		startMusic = true;
 		//createSource.Play();
 		AudioSource temp = GameObject.Find ("BackgroundMusic").GetComponent<AudioSource>();
@@ -117,8 +120,10 @@ public class GameController : MonoBehaviour
 			{
 				//start music
 				if (startMusic) {
+					/*
 					menuSource.Stop();
 					createSource.Play();
+					*/
 					startMusic = false;
 				}
 
@@ -173,8 +178,10 @@ public class GameController : MonoBehaviour
 			{
 				//music handling
 				if (startMusic) {
+					/*
 					createSource.Stop();
 					menuSource.Play();
+					*/
 					startMusic = false;
 				}
 
@@ -219,8 +226,10 @@ public class GameController : MonoBehaviour
 			{
 				//start music
 				if (startMusic) {
+					/*
 					menuSource.Stop();
 					runnerSource.Play();
+					*/
 					startMusic = false;
 				}
 
@@ -273,8 +282,17 @@ public class GameController : MonoBehaviour
 						currPlayer = 0;
 						currCreator = 1;
 					}
-					player.setController(currPlayer + 1);
-					creator.setController(currCreator + 1);
+
+					if (twoControllers)
+					{
+						player.setController (currPlayer + 1);
+						creator.setController (currCreator + 1);
+					}
+					else
+					{
+						player.setController (1);
+						creator.setController (1);
+					}
 
 					// The string to Print above the scoreboard
 					string information;
@@ -335,8 +353,10 @@ public class GameController : MonoBehaviour
 			{
 				//start music
 				if (startMusic) {
+					/*
 					runnerSource.Stop();
 					menuSource.Play();
+					*/
 					startMusic = false;
 				}
 
@@ -420,7 +440,7 @@ public class GameController : MonoBehaviour
 		playerSprites = player.gameObject.GetComponentsInChildren<SpriteRenderer>();
 		camera.setFollowing(player.gameObject);
 
-		if (Input.GetJoystickNames().Length > 1)
+		if (twoControllers)
 		{
 			player.setController(1);
 		}
@@ -438,7 +458,7 @@ public class GameController : MonoBehaviour
 		creatorRenderer = creator.gameObject.GetComponent<SpriteRenderer>();
 		camera.setFollowing(creator.gameObject);
 
-		if (Input.GetJoystickNames().Length > 1)
+		if (twoControllers)
 		{
 			creator.setController(2);
 		}

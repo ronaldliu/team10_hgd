@@ -45,7 +45,7 @@ public class SettingsMenu : MonoBehaviour {
 	{
 		float leftX = Input.GetAxisRaw ("L_XAxis_1");
 		float leftY = Input.GetAxisRaw ("L_YAxis_1");
-		if ((leftX != 0 || leftY != 0) && canInteract) {
+		if ((Mathf.Abs(leftX) > 0.1f || Mathf.Abs(leftY) > 0.1f) && canInteract) {
 			canInteract = false;
 			StartCoroutine (SelectionChange (leftX, leftY));
 		}
@@ -73,7 +73,7 @@ public class SettingsMenu : MonoBehaviour {
 		UpdateCharacters ();
 
 
-		if (Input.GetButtonDown ("A_1")) {
+		if (Input.GetButtonDown ("Start_1")) {
 			MatchSettingsHolder msh = GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ();
 			msh.player1Color = new Color(availColors [colorSelected [0]].r, availColors [colorSelected [0]].g, availColors [colorSelected [0]].b, 1f);
 			msh.player2Color = new Color(availColors [colorSelected [1]].r, availColors [colorSelected [1]].g, availColors [colorSelected [1]].b, 1f);
@@ -96,12 +96,12 @@ public class SettingsMenu : MonoBehaviour {
 
 	IEnumerator SelectionChange(float xAxis, float yAxis)
 	{
-		if (yAxis > 0) {
+		if (yAxis > 0.1f) {
 			selected++;
 			if (selected >= 3)
 				selected = 0;
 		}
-		if (yAxis < 0) {
+		if (yAxis < -0.1f) {
 			selected--;
 			if (selected <= -1)
 				selected = 2;
@@ -113,7 +113,7 @@ public class SettingsMenu : MonoBehaviour {
 			roundText.color = Color.white;
 			mapText.color = Color.white;
 
-			if (xAxis != 0)
+			if (Mathf.Abs(xAxis) > 0.1f)
 				twoControllers = !twoControllers;
 			
 			if (twoControllers) {
@@ -131,12 +131,12 @@ public class SettingsMenu : MonoBehaviour {
 			roundText.color = Color.green;
 			mapText.color = Color.white;
 
-			if (xAxis > 0) {
+			if (xAxis > 0.1f) {
 				rounds++;
 				if (rounds > 10)
 					rounds = 1;
 			}
-			if (xAxis < 0) {
+			if (xAxis < -0.1f) {
 				rounds--;
 				if (rounds < 1)
 					rounds = 10;
@@ -148,7 +148,7 @@ public class SettingsMenu : MonoBehaviour {
 			roundText.color = Color.white;
 			mapText.color = Color.green;
 
-			if (xAxis != 0)
+			if (Mathf.Abs(xAxis) > 0.1f)
 				randomMap = !randomMap;
 
 			if (randomMap)
