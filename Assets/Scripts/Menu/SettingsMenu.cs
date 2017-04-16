@@ -80,7 +80,11 @@ public class SettingsMenu : MonoBehaviour {
 			msh.useTwoControllers = twoControllers;
 			msh.rounds = rounds;
 			msh.randomMaps = randomMap;
-			SceneManager.LoadScene ("FinalGame");
+			if (randomMap) {
+				SceneManager.LoadScene ("FinalGame");
+			} else {
+				SceneManager.LoadScene ("MapSelection");
+			}
 		}
 
 	}

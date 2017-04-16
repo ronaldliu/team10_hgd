@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class MapSelection : MonoBehaviour {
 
@@ -17,9 +18,11 @@ public class MapSelection : MonoBehaviour {
 	List<MapInfo> maps;
 	List<GameObject> knobs;
 
+	public bool done;
+
 	// Use this for initialization
 	void Start () {
-		canvas = GameObject.Find ("Canvas");
+		canvas = GameObject.Find ("MapSelectionCanvas");
 		image = GameObject.Find ("Image").GetComponent<Image>();
 		mapText = GameObject.Find ("MapText").GetComponent<Text>();
 		knob = GameObject.Find ("Knob");
@@ -50,6 +53,8 @@ public class MapSelection : MonoBehaviour {
 			}
 			knobs.Add (newKnob);
 		}
+
+		done = false;
 	}
 	
 	// Update is called once per frame
@@ -59,6 +64,13 @@ public class MapSelection : MonoBehaviour {
 		if ((Mathf.Abs(xOne) > 0.1f || Mathf.Abs(xTwo) > 0.1f) && canInteract) {
 			canInteract = false;
 			StartCoroutine (SelectionChange (xOne, xTwo));
+		}
+		if (Input.GetButtonDown ("A_1")) {
+			GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ().mapToLoad = maps [selected].name;
+			if(GameObject.Find("Game"))
+				done = true;
+			else
+				SceneManager.LoadScene ("FinalGame");
 		}
 	}
 
