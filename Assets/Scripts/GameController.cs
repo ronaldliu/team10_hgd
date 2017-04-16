@@ -14,8 +14,6 @@ public class GameController : MonoBehaviour
 	// public int whoIsPlayer;
 	// public int whoIsCreator;
 
-	public int maxRounds;
-
 	public static int winScore = 0;
 	private int[] scores = {0, 0};
 	private int currPlayer;
@@ -49,19 +47,26 @@ public class GameController : MonoBehaviour
 	private PlayerHud playerUI;
 	private SpriteRenderer[] playerSprites;
 
+	private MapSelection mapSlectionUI;
+	private bool selectingMap;
+
 	public Color player1Color;
 	public Color player2Color;
+	public bool twoControllers;
+	public int maxRounds;
+	public bool randomMaps;
 
 	public GameObject spawnedContainer;
 
 	private GameObject mapContainer;
 	private MapInfo mapinfo;
+	private MatchSettingsHolder SettingsManager;
 
 	new private DynamicCamera camera;
 
-	public AudioSource createSource;
-	public AudioSource runnerSource;
-	public AudioSource menuSource;
+	//public AudioSource createSource;
+	//public AudioSource runnerSource;
+	//public AudioSource menuSource;
 	private bool startMusic;
 
 	//New keywords is used to hide the default Unity camera keyword for this one.
@@ -88,19 +93,28 @@ public class GameController : MonoBehaviour
 		scoreboard = scoreboardCanvas.transform.FindChild("Scoreboard").GetComponent<Scoreboard>();
 		scoreboardCanvas.SetActive(false);
 
+		SettingsManager = GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ();
+		player1Color = SettingsManager.player1Color;
+		player2Color = SettingsManager.player2Color;
+		twoControllers = SettingsManager.useTwoControllers;
+
+		mapSlectionUI = GameObject.Find ("MapSelectionCanvas").GetComponent<MapSelection>();
+		mapSlectionUI.gameObject.SetActive (false);
+		selectingMap = false;
+
+		maxRounds = SettingsManager.rounds;
+		randomMaps = SettingsManager.randomMaps;
+		
 		//set up music objects
+		/*
 		createSource = GameObject.Find ("CreatorMusic").GetComponent<AudioSource>();
 		runnerSource = GameObject.Find ("PlayerMusic").GetComponent<AudioSource>();
 		menuSource = GameObject.Find ("MenuMusic").GetComponent<AudioSource>();
+		*/
 		startMusic = true;
 		//createSource.Play();
 		AudioSource temp = GameObject.Find ("BackgroundMusic").GetComponent<AudioSource>();
 		temp.Stop ();
-
-		PlayerColorHolder ColorManager = GameObject.Find ("ColorHolder").GetComponent<PlayerColorHolder> ();
-		player1Color = ColorManager.player1Color;
-		player2Color = ColorManager.player2Color;
-
 	}
 
 	void Update() {
@@ -270,8 +284,17 @@ public class GameController : MonoBehaviour
 						currPlayer = 0;
 						currCreator = 1;
 					}
-					player.setController(currPlayer + 1);
-					creator.setController(currCreator + 1);
+
+					if (twoControllers)
+					{
+						player.setController (currPlayer + 1);
+						creator.setController (currCreator + 1);
+					}
+					else
+					{
+						player.setController (1);
+						creator.setController (1);
+					}
 
 					// The string to Print above the scoreboard
 					string information;
@@ -282,6 +305,10 @@ public class GameController : MonoBehaviour
 						ranTwice = false;
 						information = "Starting Next Round";
 						Destroy(mapContainer);
+						if (!randomMaps) {
+							selectingMap = true;
+							mapSlectionUI.gameObject.SetActive (true);
+						}
 					}
 					else
 					{
@@ -335,6 +362,17 @@ public class GameController : MonoBehaviour
 					runnerSource.Pause();
 					menuSource.Play();
 					startMusic = false;
+				}
+
+				if (selectingMap) {
+					scoreboardCanvas.SetActive(false);
+
+					if (mapSlectionUI.done) {
+						mapSlectionUI.gameObject.SetActive (false);
+						scoreboardCanvas.SetActive(true);
+						selectingMap = false;
+					}
+					return;
 				}
 
 				clearSpawnedObjects();
@@ -394,8 +432,6 @@ public class GameController : MonoBehaviour
 			}
 		}
 
-
-
 		timer -= Time.deltaTime;
 	} 
 	//End of update Method
@@ -417,7 +453,7 @@ public class GameController : MonoBehaviour
 		playerSprites = player.gameObject.GetComponentsInChildren<SpriteRenderer>();
 		camera.setFollowing(player.gameObject);
 
-		if (Input.GetJoystickNames().Length > 1)
+		if (twoControllers)
 		{
 			player.setController(1);
 		}
@@ -435,7 +471,7 @@ public class GameController : MonoBehaviour
 		creatorRenderer = creator.gameObject.GetComponent<SpriteRenderer>();
 		camera.setFollowing(creator.gameObject);
 
-		if (Input.GetJoystickNames().Length > 1)
+		if (twoControllers)
 		{
 			creator.setController(2);
 		}
@@ -476,9 +512,16 @@ public class GameController : MonoBehaviour
 
 	public void generateMap()
 	{
-		Object[] mapOs = Resources.LoadAll ("Maps/");
-		int rnd = Random.Range (0, mapOs.Length);
-		GameObject mapGo = (GameObject)mapOs [rnd];
+		GameObject mapGo;
+		if (randomMaps) {
+			Object[] mapOs = Resources.LoadAll ("Maps/");
+			int rnd = Random.Range (0, mapOs.Length);
+			mapGo = (GameObject)mapOs [rnd];
+		} else {
+			string mapPath = "Maps/" + SettingsManager.mapToLoad;
+			mapGo = Resources.Load(mapPath, typeof(GameObject)) as GameObject;
+		}
+
 		if (mapGo.GetComponent<MapInfo> () && mapGo.name.ToCharArray () [0] != '~') {
 			mapContainer = Instantiate (mapGo);
 			mapinfo = mapContainer.GetComponent<MapInfo> ();
