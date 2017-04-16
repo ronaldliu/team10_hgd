@@ -110,7 +110,7 @@ public class GameController : MonoBehaviour
 		runnerSource = GameObject.Find ("PlayerMusic").GetComponent<AudioSource>();
 		menuSource = GameObject.Find ("MenuMusic").GetComponent<AudioSource>();
 		startMusic = true;
-		//createSource.Play();
+		createSource.Play();
 		AudioSource temp = GameObject.Find ("BackgroundMusic").GetComponent<AudioSource>();
 		temp.Stop ();
 	}
