@@ -11,6 +11,7 @@ public class MapEditor : EditorWindow {
 	List<GameObject> placableWeapons;
 	GameObject mousedOver;
 
+	static bool platPass;
 	static bool platSnap;
 	static float platSnapSize;
 	static GameObject draggedObj;
@@ -20,8 +21,8 @@ public class MapEditor : EditorWindow {
 	public static bool meme;
 
 	//Map references
-	GameObject mapObj;
-	MapInfo mapInfo;
+	public static GameObject mapObj;
+	public static MapInfo mapInfo;
 
 	//Map Info
 	string mapName;
@@ -72,6 +73,7 @@ public class MapEditor : EditorWindow {
 		mapInScene = false;
 		meme = false;
 		mapName = "Map";
+		platPass = false;
 		platSnap = true;
 		platSnapSize = 1.0f;
 	}
@@ -82,6 +84,14 @@ public class MapEditor : EditorWindow {
 
 		//if (GUILayout.Button("Press Me"))
 		//	Debug.Log("Got it to work.");
+
+		if (mapInfo) {
+			// Read the level colors
+			Camera.main.backgroundColor = mapInfo.backColor;
+			Camera.main.transform.Find("Back").GetComponentInChildren<ParticleSystem> ().startColor = mapInfo.particleColor1;
+			Camera.main.transform.Find("Back2").GetComponentInChildren<ParticleSystem> ().startColor = mapInfo.particleColor2;
+		}
+
 		if (startLocation != null)
 			startLocation.position = Handles.PositionHandle (startLocation.position, Quaternion.identity);
 
@@ -108,6 +118,11 @@ public class MapEditor : EditorWindow {
 				//Move the placed object into the correct location in the map hierarchy
 				if (draggedObj.GetComponent<PlatformController> ()) {
 					draggedObj.transform.SetParent (platforms);
+
+					if (platPass) {
+						draggedObj.AddComponent<PlatformEffector2D> ();
+						draggedObj.GetComponent<BoxCollider2D> ().usedByEffector = true;
+					}
 				} else if (draggedObj.GetComponent<PickUpPower> () || draggedObj.GetComponent<PickUpWeapon> ()) {
 					draggedObj.transform.SetParent (powerUps);
 				}
@@ -159,6 +174,11 @@ public class MapEditor : EditorWindow {
 				startLocation.position = EditorGUILayout.Vector3Field ("Start Location", startLocation.position);
 				endFlag.position = EditorGUILayout.Vector3Field ("End Flag Location", endFlag.position);
 			}
+			mapInfo.backColor = EditorGUILayout.ColorField ("Background Color", mapInfo.backColor);
+			mapInfo.particleColor1 = EditorGUILayout.ColorField ("Particle Color 1", mapInfo.particleColor1);
+			mapInfo.particleColor2 = EditorGUILayout.ColorField ("Particle Color 2", mapInfo.particleColor2);
+			if (GUILayout.Button ("Readjust \"Out of Bounds\" Object"))
+				readjustOOB ();
 			if (GUILayout.Button ("Save " + mapName + " as Prefab"))
 				saveAsPrefab ();
 
@@ -166,12 +186,13 @@ public class MapEditor : EditorWindow {
 
 			EditorGUILayout.Separator ();
 			GUILayout.Label ("Platforms", EditorStyles.boldLabel);
-			//EditorGUILayout.BeginHorizontal ();
 
-			foreach (GameObject go in placablePlatforms) {
+			EditorGUILayout.BeginHorizontal ();
+			for (int i = 0; i < placablePlatforms.Count; i++) {
+				GameObject go = placablePlatforms [i];
 				Texture goTex;
 				if (goTex = go.GetComponent<MeshRenderer>().sharedMaterial.mainTexture) {
-					GUIContent content = new GUIContent (go.name + " Platform", goTex);
+					GUIContent content = new GUIContent (goTex);
 					GUILayout.Box (content);
 
 					//Check if this box was moused over
@@ -179,9 +200,16 @@ public class MapEditor : EditorWindow {
 						mousedOver = go;
 					}
 				}
-			}
-			//EditorGUILayout.EndHorizontal ();
 
+				//Start a new line for the dynamic platforms
+				if (i == 5) {
+					EditorGUILayout.EndHorizontal ();
+					EditorGUILayout.BeginHorizontal ();
+				}
+			}
+			EditorGUILayout.EndHorizontal ();
+
+			platPass = EditorGUILayout.ToggleLeft("Can Pass Underneath?", platPass);
 			platSnap = EditorGUILayout.BeginToggleGroup ("Snap to Grid", platSnap);
 			platSnapSize = EditorGUILayout.FloatField ("Snap Grid Size", platSnapSize);
 			if (platSnapSize <= 0)
@@ -249,6 +277,27 @@ public class MapEditor : EditorWindow {
 		}
 	}
 
+	void readjustOOB() {
+		float mostLeft = 0;
+		float mostRight = 0;
+		float mostDown = 0;
+
+		foreach (BoxCollider2D box in platforms.GetComponentsInChildren<BoxCollider2D>()) {
+			Bounds b = box.bounds;
+			if (b.center.x - b.extents.x < mostLeft)
+				mostLeft = b.center.x - b.extents.x;
+			if (b.center.x + b.extents.x > mostRight)
+				mostRight = b.center.x + b.extents.x;
+			if (b.center.y - b.extents.y < mostDown)
+				mostDown = b.center.y - b.extents.y;
+		}
+		//Readjust the bounds to be underneath every platform
+		GameObject boundObj = outOfBounds.Find("Bound").gameObject;
+		boundObj.transform.position = new Vector3 (((mostRight - mostLeft) / 2)+mostLeft, mostDown - 20, 0);
+		boundObj.transform.localScale = new Vector3 (mostRight - mostLeft + 400, 7, 1);
+		Selection.activeGameObject = boundObj;
+	}
+
 	//Returns whether the map was created or not
 	bool createMap() {
 		//Check if this map name exists already
@@ -258,14 +307,14 @@ public class MapEditor : EditorWindow {
 			if (!result)
 				return false;
 			else {
-				//TODO
-				//Load existing map
-				return false;
+				mapObj = Instantiate (Resources.Load ("Maps/" + mapName) as GameObject);
+				readInfo ();
+				return true;
 			}
 		}
 
 		//Generate an empty map using the template
-		GameObject template = Resources.Load ("Maps/Map_Template") as GameObject;
+		GameObject template = Resources.Load ("Maps/~Map_Template") as GameObject;
 
 		mapObj = Instantiate (template);
 		mapObj.name = mapName;
@@ -292,14 +341,9 @@ public class MapEditor : EditorWindow {
 
 	}
 
-	//Push MapInfo to mapObj
-	void WriteInfo() {
-		mapObj.name = mapName;
-		mapInfo = mapObj.GetComponent<MapInfo> ();
-
-	}
-
 	void saveAsPrefab() {
+		//Update OOB
+		readjustOOB();
 		//Set references where needed
 		mapInfo = mapObj.GetComponent<MapInfo> ();
 		mapInfo.startLocation = startLocation;

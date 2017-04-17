@@ -11,7 +11,8 @@ public class CollisionController : MonoBehaviour {
 		isPlayer = gameObject.tag.Equals ("Player");
 		if(isPlayer)
 			player = GetComponent<PlayerController> ();
-		game = GameObject.Find ("Game").GetComponent<GameController> ();
+		if(GameObject.Find("Game"))
+			game = GameObject.Find ("Game").GetComponent<GameController> ();
 	}
 
 	//For objects that aren't triggers
@@ -46,7 +47,7 @@ public class CollisionController : MonoBehaviour {
 				player.onLadder = true;
 			break;
 		case "EndFlag":
-			if(isPlayer)
+			if(isPlayer && game)
 				game.endPlayerPhase ();
 			break;
 		case "Spike":

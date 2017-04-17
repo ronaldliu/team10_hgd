@@ -26,8 +26,13 @@ public class ExplodableObj : MonoBehaviour {
 			//add the force
 			Vector3 calc = (c.gameObject.transform.position - this.gameObject.transform.position);
 			calc.z = 0f;
-			print( "applying explosion force to " + c.gameObject.name + ". The force appied is: " + calc);
+			//print( "applying explosion force to " + c.gameObject.name + ". The force appied is: " + calc);
 			phy.AddForce (calc * this.force, ForceMode2D.Impulse);
 		}
+
+		// Produce the exploision particles
+		GameObject particles = Instantiate (Resources.Load ("Traps/Explosion", typeof(GameObject))) as GameObject;
+		particles.transform.position = transform.position;
+		Destroy (particles, 0.25f);
 	}
 }
