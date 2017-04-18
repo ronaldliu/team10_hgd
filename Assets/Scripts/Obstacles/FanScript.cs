@@ -3,6 +3,7 @@ using System.Collections;
 
 public class FanScript : MonoBehaviour {
 
+	public float health = 150f;
 	public int numberOfDivisions = 8; //number of raycasts to do to find points
 	public int effectDistance = 30; //max distance a raycast can travel
 	public float force = 20f;
@@ -33,7 +34,7 @@ public class FanScript : MonoBehaviour {
 		points [3] = new Vector2 (-halfWA, heightA);
 		float distanceOffset = ((float)width / (float)this.numberOfDivisions) / (float)ppu;
 		//Quaternion rotation = this.gameObject.transform.localRotation; //maybe not local rotation?
-		PolygonCollider2D coll = this.GetComponent<PolygonCollider2D> ();
+		PolygonCollider2D coll = transform.Find("Wind").GetComponent<PolygonCollider2D> ();
 		for (int i = 0; i <= this.numberOfDivisions; i++) {
 			Vector3 rayPosInLocal = new Vector3 (-halfWA + i * distanceOffset, halfHA, 0);
 			//RaycastHit2D hit = Physics2D.Raycast (new Vector2(-halfWA + this.gameObject.transform.position.x + i * distanceOffset, this.gameObject.transform.position.y),/* rotation * */ this.gameObject.transform.up, this.effectDistance, this.stopsFan);
@@ -48,7 +49,15 @@ public class FanScript : MonoBehaviour {
 
 	}
 
-	void OnTriggerStay2D(Collider2D other) {
+	//react to being shot
+	public void applyDamage(int damage) {
+		health -= damage;
+		if (health <= 0) {
+			Destroy (this.gameObject);
+		}
+	}
+
+	public void OnTriggerStay2D(Collider2D other) {
 		Rigidbody2D phy = other.gameObject.GetComponent<Rigidbody2D> ();
 		if (phy == null) return; //not physics object so skip
 		float dist = Vector2.Distance(this.gameObject.transform.position, other.gameObject.transform.position);
