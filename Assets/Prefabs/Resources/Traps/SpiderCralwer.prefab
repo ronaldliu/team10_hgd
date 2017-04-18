@@ -26,7 +26,6 @@ GameObject:
   - 58: {fileID: 58000012480880628}
   - 114: {fileID: 114000012601869868}
   - 114: {fileID: 114000011554456538}
-  - 114: {fileID: 114000011313402982}
   m_Layer: 9
   m_Name: SpiderCralwer
   m_TagString: SpiderCrawler
@@ -106,22 +105,6 @@ BoxCollider2D:
   m_Offset: {x: 0.04285431, y: -0.025712585}
   serializedVersion: 2
   m_Size: {x: 0.23429112, y: 0.26857492}
---- !u!114 &114000011313402982
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000011182619050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 363bde5ac3c00f9409cdc02b1b1fb1f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: Spider
-  description: Gahh spooky
-  cost: 20
-  canPlaceOnWalls: 0
-  canPlaceInAir: 1
 --- !u!114 &114000011554456538
 MonoBehaviour:
   m_ObjectHideFlags: 1
