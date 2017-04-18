@@ -1484,7 +1484,7 @@ GameObject:
   - 4: {fileID: 4000011285776096}
   - 114: {fileID: 114000012344161374}
   m_Layer: 0
-  m_Name: GreyMatter
+  m_Name: Grey Matter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
