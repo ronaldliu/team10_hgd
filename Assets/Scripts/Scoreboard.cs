@@ -34,7 +34,7 @@ public class Scoreboard : MonoBehaviour {
 		loserTextsP2 = transform.Find ("LoserTextsP2").gameObject;
 		loserTextsP1.SetActive (false);
 		loserTextsP2.SetActive (false);
-		MatchSettingsHolder SettingsManager = GameObject.Find ("ColorHolder").GetComponent<MatchSettingsHolder> ();
+		MatchSettingsHolder SettingsManager = GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ();
 		Color temp1 = SettingsManager.player1Color;
 		Color temm2 = SettingsManager.player2Color;
 

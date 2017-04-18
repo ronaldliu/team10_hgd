@@ -64,9 +64,9 @@ public class GameController : MonoBehaviour
 
 	new private DynamicCamera camera;
 
-	//public AudioSource createSource;
-	//public AudioSource runnerSource;
-	//public AudioSource menuSource;
+	public AudioSource createSource;
+	public AudioSource runnerSource;
+	public AudioSource menuSource;
 	private bool startMusic;
 
 	//New keywords is used to hide the default Unity camera keyword for this one.
@@ -106,13 +106,11 @@ public class GameController : MonoBehaviour
 		randomMaps = SettingsManager.randomMaps;
 		
 		//set up music objects
-		/*
 		createSource = GameObject.Find ("CreatorMusic").GetComponent<AudioSource>();
 		runnerSource = GameObject.Find ("PlayerMusic").GetComponent<AudioSource>();
 		menuSource = GameObject.Find ("MenuMusic").GetComponent<AudioSource>();
-		*/
 		startMusic = true;
-		//createSource.Play();
+		createSource.Play();
 		AudioSource temp = GameObject.Find ("BackgroundMusic").GetComponent<AudioSource>();
 		temp.Stop ();
 	}
