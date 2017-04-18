@@ -42,7 +42,7 @@ public class GameDebugController : MonoBehaviour
 		if (Input.GetButtonDown("Back_1"))
 			SceneManager.LoadScene("FinalGame");
 
-		if (!mapinfo) {
+		if (!mapinfo && GameObject.FindObjectOfType<MapInfo> ()) {
 			mapinfo = GameObject.FindObjectOfType<MapInfo> ();
 			mapContainer = mapinfo.gameObject;
 
