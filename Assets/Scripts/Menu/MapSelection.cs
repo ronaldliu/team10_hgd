@@ -115,4 +115,8 @@ public class MapSelection : MonoBehaviour {
 		yield return new WaitForSeconds (0.2f);
 		canInteract = true;
 	}
+
+	private void takeSnapshotOfMap() {
+		
+	}
 }

@@ -8,7 +8,7 @@ public class PlayerController: MonoBehaviour {
 	public float resistance = 1f;
 	public float xAccel = 0.75f;
 	public float maxSpeed = 30f;
-	public float jumpForce = 2000f;
+	public float jumpForce = 1900f;
 	public float startingHealth = 100F;
 	public float currentHealth;
 	public bool onLadder = false;
@@ -142,7 +142,7 @@ public class PlayerController: MonoBehaviour {
 				}
 				newYVelocity = Mathf.Clamp (newYVelocity, -maxSpeed, maxSpeed);
 			} else {
-				newYVelocity = rBody.velocity.y;
+				newYVelocity = Mathf.Clamp(rBody.velocity.y, -100f, Mathf.Infinity);
 			}
 
 			// Apply the new velocity
@@ -298,13 +298,18 @@ public class PlayerController: MonoBehaviour {
 	//	if you disable to the player in the middle of its execution
 	public void resetEverything()
 	{
+		powerUp = "";
+		rBody.velocity = Vector2.zero;
 		resetAttributesToDefault ();
 		resetHealthOfPlayer ();
 		SpriteRenderer[] char_sprites = GetComponentsInChildren<SpriteRenderer> ();
 		foreach (SpriteRenderer rend in char_sprites) {
 			rend.color = new Color(defaultColor.r, defaultColor.g, defaultColor.b);
 		}
+		if (isDead)
+			isDead = false;
 		canTakeDamage = true;
+		anim.Play ("Idle", 0, 0f);
 	}
 
 	// Sets the player attributes to its default values

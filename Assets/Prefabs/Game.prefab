@@ -80,7 +80,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc37c8b73361be44ea04f740c17eb4e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxRounds: 5
   phaseSwitchMessages:
   - Time's Up!
   - Get Ready...
@@ -101,4 +100,14 @@ MonoBehaviour:
     type: 2}
   playerPrefab: {fileID: 1000013445529504, guid: 7a080c066c8efbd4d8081438da81ca2a,
     type: 2}
+  playerEntPrefab: {fileID: 1000013713532242, guid: 7a080c066c8efbd4d8081438da81ca2a,
+    type: 2}
+  player1Color: {r: 0, g: 0, b: 0, a: 0}
+  player2Color: {r: 0, g: 0, b: 0, a: 0}
+  twoControllers: 0
+  maxRounds: 5
+  randomMaps: 0
   spawnedContainer: {fileID: 0}
+  createSource: {fileID: 0}
+  runnerSource: {fileID: 0}
+  menuSource: {fileID: 0}

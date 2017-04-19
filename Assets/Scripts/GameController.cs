@@ -36,6 +36,7 @@ public class GameController : MonoBehaviour
 	private Scoreboard scoreboard;
 	public GameObject creatorPrefab;
 	public GameObject playerPrefab;
+	public GameObject playerEntPrefab;
 
 	private Transform creatorContainer;
 	private CreatorController creator;
@@ -344,6 +345,7 @@ public class GameController : MonoBehaviour
 					timer = 10f;
 
 					// Reset the player to starting
+					player.startingHealth = 100f;
 					player.resetEverything();
 					nextState();
 					//set bool for beginning of next round
@@ -493,12 +495,23 @@ public class GameController : MonoBehaviour
 
 	public void respawnPlayer()
 	{
-		player.resetHealthOfPlayer();
+		player.startingHealth += 20f;
+		player.resetEverything ();
+		playerUI.powerUpTimer = 0f;
 
 		// Position player at start
 		Vector3 tempPos = mapinfo.startLocation.transform.position;
 		tempPos.z = player.transform.position.z;
 		player.transform.position = tempPos;
+
+		/*
+		GameObject.Destroy (player.gameObject);
+		Transform newPlayerEnt = ((GameObject)Instantiate (playerEntPrefab, playerContainer)).transform;
+		player = newPlayerEnt.GetComponent<PlayerController> ();
+		playerSprites = player.gameObject.GetComponentsInChildren<SpriteRenderer>();
+		camera.setFollowing(player.gameObject);
+		*/
+
 		scores[currPlayer] -= 100;
 		scores[currCreator] += 100;
 	}
