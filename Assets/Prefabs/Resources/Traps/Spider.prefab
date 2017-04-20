@@ -402,7 +402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Spider
   description: Follows the Player
-  cost: 40
+  cost: 20
   canPlaceOnWalls: 0
   canPlaceInAir: 1
 --- !u!114 &114000014092143044

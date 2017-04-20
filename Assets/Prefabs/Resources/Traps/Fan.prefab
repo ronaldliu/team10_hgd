@@ -193,8 +193,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Fan
-  description: Really Blows
-  cost: 30
+  description: Really blows...
+  cost: 10
   canPlaceOnWalls: 1
   canPlaceInAir: 0
 --- !u!198 &198000011565728836

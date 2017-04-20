@@ -59,6 +59,7 @@ public class BearTrapScript : MonoBehaviour {
 			stuckPos = playerRef.transform.position;
 			triggered = true;
 			this.gameObject.GetComponent<SpriteRenderer>().sprite = shutSprite;
+			coll.gameObject.SendMessage ("applyDamage", 10f, UnityEngine.SendMessageOptions.DontRequireReceiver);
 		}
 	}
 }

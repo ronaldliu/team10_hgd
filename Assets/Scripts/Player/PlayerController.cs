@@ -218,7 +218,8 @@ public class PlayerController: MonoBehaviour {
 
 			currentHealth = Mathf.Clamp (currentHealth - actualDamage, 0, startingHealth);
 
-			source.PlayOneShot (playerHitSound, 1.0f);
+			if(damage > 0f)
+				source.PlayOneShot (playerHitSound, 1.0f);
 
 			if (damage > 0) 
 				StartCoroutine ("takenDamage");
