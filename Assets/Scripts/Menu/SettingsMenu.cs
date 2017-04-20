@@ -51,23 +51,27 @@ public class SettingsMenu : MonoBehaviour {
 		}
 
 		if (Input.GetButtonDown ("RB_1")) {
-			if (colorSelected[0] < availColors.Length - 1) {
-				colorSelected[0]++;
+			colorSelected[0]++;
+			if (colorSelected[0] >= availColors.Length) {
+				colorSelected [0]= 0;
 			}
 		}
 		if (Input.GetButtonDown ("LB_1")) {
-			if (colorSelected[0] > 0) {
-				colorSelected[0]--;
+			colorSelected [0]--;
+			if (colorSelected[0] < 0) {
+				colorSelected[0] = availColors.Length - 1;
 			}
 		}
 		if (Input.GetButtonDown ("RB_2") || (!twoControllers && Input.GetButtonDown ("Y_1"))) {
-			if (colorSelected[1] < availColors.Length - 1) {
-				colorSelected[1]++;
+			colorSelected[1]++;
+			if (colorSelected[1] >= availColors.Length) {
+				colorSelected [1]= 0;
 			}
 		}
 		if (Input.GetButtonDown ("LB_2") || (!twoControllers && Input.GetButtonDown ("X_1"))) {
-			if (colorSelected[1] > 0) {
-				colorSelected[1]--;
+			colorSelected [1]--;
+			if (colorSelected[1] < 0) {
+				colorSelected[1] = availColors.Length - 1;
 			}
 		}
 		UpdateCharacters ();

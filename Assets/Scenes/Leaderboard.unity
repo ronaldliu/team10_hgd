@@ -328,7 +328,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   f: {fileID: 12800000, guid: 1f971561838c84641a1542240eb0360d, type: 3}
-  camera: {fileID: 1517257568}
 --- !u!4 &832061877
 Transform:
   m_ObjectHideFlags: 0
@@ -575,7 +574,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0.3882353}
+  m_BackGroundColor: {r: 0.41568628, g: 0.48235294, b: 0.5882353, a: 1}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
