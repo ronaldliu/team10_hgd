@@ -319,6 +319,7 @@ public class GameController : MonoBehaviour
 					{
 						information = "The Loser Is...";
 						state = 4;
+						mapSlectionUI.gameObject.SetActive (false);
 						scoreboardCanvas.SetActive(true);
 						scoreboard.updateScoreboardAll(
 							phaseSwitchMessages[0], 
@@ -326,7 +327,7 @@ public class GameController : MonoBehaviour
 							scores[1], 
 							currPlayer, 
 							currCreator, 
-							round.ToString(),
+							(round-1).ToString(),
 							information);
 						break;
 					}
@@ -355,7 +356,7 @@ public class GameController : MonoBehaviour
 				}
 				break;
 			}
-		case 3:
+		case 3: //Phase Switch
 			{
 				//start music
 				if (startMusic) {
@@ -364,10 +365,13 @@ public class GameController : MonoBehaviour
 					startMusic = false;
 				}
 
+				clearSpawnedObjects();
+
 				if (selectingMap) {
 					scoreboardCanvas.SetActive(false);
 
 					if (mapSlectionUI.done) {
+						mapSlectionUI.done = false;
 						mapSlectionUI.gameObject.SetActive (false);
 						scoreboardCanvas.SetActive(true);
 						selectingMap = false;
@@ -375,7 +379,6 @@ public class GameController : MonoBehaviour
 					return;
 				}
 
-				clearSpawnedObjects();
 				string timeText;
 				timeText = (int)((timer + 1) / 60) + ":" + (int)(((timer + 1) % 60) / 10) + (int)(((timer + 1) % 60) % 10);
 				scoreboard.updateScoreboardMessage(timeText);

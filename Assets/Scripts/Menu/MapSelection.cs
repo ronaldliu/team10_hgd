@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class MapSelection : MonoBehaviour {
 
 	GameObject canvas;
-	Image image;
+	public Image image;
 	Text mapText;
 	GameObject knob;
 	float knobWidth;
@@ -19,11 +19,15 @@ public class MapSelection : MonoBehaviour {
 	List<GameObject> knobs;
 
 	public bool done;
+	public Camera previewCam;
+
+	GameObject back;
+	GameObject back2;
 
 	// Use this for initialization
 	void Start () {
 		canvas = GameObject.Find ("MapSelectionCanvas");
-		image = GameObject.Find ("Image").GetComponent<Image>();
+		image = GameObject.Find ("PreviewImage").GetComponent<Image>();
 		mapText = GameObject.Find ("MapText").GetComponent<Text>();
 		knob = GameObject.Find ("Knob");
 		knobWidth = knob.GetComponent<RectTransform> ().rect.width;
@@ -55,6 +59,12 @@ public class MapSelection : MonoBehaviour {
 		}
 
 		done = false;
+		if (GameObject.Find ("Game")) {
+			back = GameObject.Find ("Back");
+			back2 = GameObject.Find ("Back2");
+			GameObject.Find ("Prompt_B").SetActive(false);
+		}
+		takeSnapshotOfMap ();
 	}
 	
 	// Update is called once per frame
@@ -65,12 +75,22 @@ public class MapSelection : MonoBehaviour {
 			canInteract = false;
 			StartCoroutine (SelectionChange (xOne, xTwo));
 		}
-		if (Input.GetButtonDown ("A_1")) {
+		if (Input.GetButtonDown ("A_1") || Input.GetButtonDown ("A_2")) {
 			GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ().mapToLoad = maps [selected].name;
 			if(GameObject.Find("Game"))
 				done = true;
 			else
 				SceneManager.LoadScene ("FinalGame");
+		}
+		if (Input.GetButtonDown ("B_1") || Input.GetButtonDown ("B_2")) {
+			if(!GameObject.Find("Game"))
+				SceneManager.LoadScene ("MatchSettings");
+		}
+
+		foreach (GameObject go in knobs) {
+			float alpha = Mathf.Abs (go.transform.localPosition.x) > knobWidth * 2? 0f : 1f;
+			Color color = go.GetComponent<RawImage> ().color;
+			go.GetComponent<RawImage> ().color = new Color(color.r, color.g, color.b, alpha);
 		}
 	}
 
@@ -81,6 +101,7 @@ public class MapSelection : MonoBehaviour {
 			if (selected < maps.Count - 1) {
 				selected++;
 				mapText.text = "< " + maps [selected].name + " >";
+				takeSnapshotOfMap ();
 
 				foreach (GameObject go in knobs) {
 					Vector3 pos = go.transform.localPosition;
@@ -98,6 +119,7 @@ public class MapSelection : MonoBehaviour {
 			if (selected > 0) {
 				selected--;
 				mapText.text = "< "  + maps [selected].name + " >";
+				takeSnapshotOfMap ();
 
 				foreach (GameObject go in knobs) {
 					Vector3 pos = go.transform.localPosition;
@@ -111,12 +133,70 @@ public class MapSelection : MonoBehaviour {
 				}
 			}
 		}
-
 		yield return new WaitForSeconds (0.2f);
 		canInteract = true;
 	}
 
+	Texture2D screenShot;
+	Sprite sprite;
+
 	private void takeSnapshotOfMap() {
-		
+
+		if (back) {
+			back.SetActive (false);
+			back2.SetActive (false);
+		}
+
+		Camera cam = Instantiate (previewCam.gameObject).GetComponent<Camera>();
+		MapInfo map = maps [selected];
+		GameObject mapOb = Instantiate (map.gameObject);
+
+		float mostLeft = 0;
+		float mostRight = 0;
+		float mostUp = 0;
+		float mostDown = 0;
+
+		foreach (BoxCollider2D box in mapOb.GetComponentsInChildren<BoxCollider2D>()) {
+			if (box.GetComponent<PlatformController> ()) {
+				Bounds b = box.bounds;
+				if (b.center.x - b.extents.x < mostLeft)
+					mostLeft = b.center.x - b.extents.x;
+				if (b.center.x + b.extents.x > mostRight)
+					mostRight = b.center.x + b.extents.x;
+				if (b.center.y + b.extents.y > mostUp)
+					mostUp = b.center.y + b.extents.y;
+				if (b.center.y - b.extents.y < mostDown)
+					mostDown = b.center.y - b.extents.y;
+			}
+		}
+
+		int resWidth = (int)image.rectTransform.rect.width;
+		int resHeight = (int)image.rectTransform.rect.height;
+
+		//Position camera
+		float aspectRatio = ((float)resWidth / (float)resHeight);
+		cam.orthographicSize = (Mathf.Max(mostUp - mostDown + 5, (mostRight - mostLeft) / aspectRatio + 5) / 2);
+		cam.transform.position = new Vector3 ((mostLeft + mostRight) / 2, ((mostUp + mostDown) / 2), -10);
+		cam.backgroundColor = map.backColor;
+
+		RenderTexture rt = new RenderTexture(resWidth, resHeight, 24);
+		cam.targetTexture = rt;
+		screenShot = new Texture2D(resWidth, resHeight, TextureFormat.RGB24, false);
+		cam.Render();
+		RenderTexture.active = rt;
+		screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
+		screenShot.Apply ();
+		sprite = Sprite.Create(screenShot, new Rect(0f, 0f, resWidth, resHeight), new Vector2(0.5f, 0.5f), 100f);
+		image.sprite = sprite;
+		cam.targetTexture = null;
+		RenderTexture.active = null;
+		Destroy(rt);
+		Destroy (mapOb);
+		Destroy (cam.gameObject);
+
+		if (back) {
+			back.SetActive (true);
+			back2.SetActive (true);
+		}
 	}
 }

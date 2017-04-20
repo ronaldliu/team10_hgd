@@ -72,7 +72,9 @@ public class SettingsMenu : MonoBehaviour {
 		}
 		UpdateCharacters ();
 
-
+		if (Input.GetButtonDown ("B_1")) {
+			SceneManager.LoadScene ("NewMainMenu");
+		}
 		if (Input.GetButtonDown ("Start_1")) {
 			MatchSettingsHolder msh = GameObject.Find ("SettingsHolder").GetComponent<MatchSettingsHolder> ();
 			msh.player1Color = new Color(availColors [colorSelected [0]].r, availColors [colorSelected [0]].g, availColors [colorSelected [0]].b, 1f);
@@ -93,8 +95,8 @@ public class SettingsMenu : MonoBehaviour {
 	{
 		for (int i = 0; i < numControllers; i++) 
 		{
-			characters [i].GetComponent<SpriteRenderer> ().color = new Color(availColors [colorSelected [i]].r, availColors [colorSelected [i]].g, availColors [colorSelected [i]].b, 1f);
-			CharBG [i].GetComponent<SpriteRenderer> ().color = new Color(availColors [colorSelected [i]].r, availColors [colorSelected [i]].g, availColors [colorSelected [i]].b, 0.25f);
+			characters [i].GetComponent<Image> ().color = new Color(availColors [colorSelected [i]].r, availColors [colorSelected [i]].g, availColors [colorSelected [i]].b, 1f);
+			CharBG [i].GetComponent<Image> ().color = new Color(availColors [colorSelected [i]].r, availColors [colorSelected [i]].g, availColors [colorSelected [i]].b, 0.25f);
 		}
 	}
 
@@ -122,12 +124,12 @@ public class SettingsMenu : MonoBehaviour {
 			
 			if (twoControllers) {
 				controllerText.text = "< Two Controllers >";
-				GameObject.Find ("MoveLeft 2").GetComponent<SpriteRenderer> ().sprite = b_lb;
-				GameObject.Find ("MoveRight 2").GetComponent<SpriteRenderer> ().sprite = b_rb;
+				GameObject.Find ("MoveLeft 2").GetComponent<Image> ().sprite = b_lb;
+				GameObject.Find ("MoveRight 2").GetComponent<Image> ().sprite = b_rb;
 			} else {
 				controllerText.text = "< Pass One Controller >";
-				GameObject.Find ("MoveLeft 2").GetComponent<SpriteRenderer> ().sprite = b_x;
-				GameObject.Find ("MoveRight 2").GetComponent<SpriteRenderer> ().sprite = b_y;
+				GameObject.Find ("MoveLeft 2").GetComponent<Image> ().sprite = b_x;
+				GameObject.Find ("MoveRight 2").GetComponent<Image> ().sprite = b_y;
 			}
 			break;
 		case 1:
