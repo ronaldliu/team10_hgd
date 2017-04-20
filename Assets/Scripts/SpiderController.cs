@@ -38,10 +38,10 @@ public class SpiderController : MonoBehaviour {
 
 			//move enemy
 			if (distanceFromPlayer < range) {
-				if (!facingLeft && distanceFromPlayer > 1) {
+				if (facingLeft && distanceFromPlayer > 1) {
 					transform.Translate (-Vector3.right * velocity * Time.deltaTime);
 				} else if(distanceFromPlayer > 1) {
-					transform.Translate (-Vector3.right * velocity * Time.deltaTime);
+					transform.Translate (Vector3.right * velocity * Time.deltaTime);
 				}
 
 				//should we change the sprites direction
