@@ -253,7 +253,7 @@ public class GameController : MonoBehaviour
 						}
 					}
 					foreach(BoxCollider2D boxc in mapContainer.GetComponentsInChildren<BoxCollider2D>()) {
-						boxc.usedByEffector = false;
+						boxc.usedByEffector = true;
 					}
 					roundStarted = true;
 				}
