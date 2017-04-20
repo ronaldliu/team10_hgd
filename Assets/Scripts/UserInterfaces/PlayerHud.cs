@@ -21,7 +21,7 @@ public class PlayerHud : MonoBehaviour {
 	// public int whoIsCreator;
 
 	private int score = 0;
-	private float powerUpTimer;
+	public float powerUpTimer;
 
 	private PlayerController player;
 

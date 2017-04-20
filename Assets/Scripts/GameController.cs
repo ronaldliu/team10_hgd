@@ -36,6 +36,7 @@ public class GameController : MonoBehaviour
 	private Scoreboard scoreboard;
 	public GameObject creatorPrefab;
 	public GameObject playerPrefab;
+	public GameObject playerEntPrefab;
 
 	private Transform creatorContainer;
 	private CreatorController creator;
@@ -131,9 +132,13 @@ public class GameController : MonoBehaviour
 					startMusic = false;
 				}
 
-				if (!mapContainer)
-				{
-					generateMap();
+				if (!mapContainer) {
+					generateMap ();
+				} else {
+					//TODO bad hotfix (also in plaer state)
+					foreach(BoxCollider2D boxc in mapContainer.GetComponentsInChildren<BoxCollider2D>()) {
+						boxc.usedByEffector = false;
+					}
 				}
 				
 				string timeText;
@@ -247,6 +252,9 @@ public class GameController : MonoBehaviour
 							ob.color = new Color(player2Color.r, player2Color.g, player2Color.b);
 						}
 					}
+					foreach(BoxCollider2D boxc in mapContainer.GetComponentsInChildren<BoxCollider2D>()) {
+						boxc.usedByEffector = true;
+					}
 					roundStarted = true;
 				}
 				string timeText;
@@ -318,6 +326,7 @@ public class GameController : MonoBehaviour
 					{
 						information = "The Loser Is...";
 						state = 4;
+						mapSlectionUI.gameObject.SetActive (false);
 						scoreboardCanvas.SetActive(true);
 						scoreboard.updateScoreboardAll(
 							phaseSwitchMessages[0], 
@@ -325,7 +334,7 @@ public class GameController : MonoBehaviour
 							scores[1], 
 							currPlayer, 
 							currCreator, 
-							round.ToString(),
+							(round-1).ToString(),
 							information);
 						break;
 					}
@@ -344,6 +353,7 @@ public class GameController : MonoBehaviour
 					timer = 10f;
 
 					// Reset the player to starting
+					player.startingHealth = 100f;
 					player.resetEverything();
 					nextState();
 					//set bool for beginning of next round
@@ -353,7 +363,7 @@ public class GameController : MonoBehaviour
 				}
 				break;
 			}
-		case 3:
+		case 3: //Phase Switch
 			{
 				//start music
 				if (startMusic) {
@@ -362,10 +372,13 @@ public class GameController : MonoBehaviour
 					startMusic = false;
 				}
 
+				clearSpawnedObjects();
+
 				if (selectingMap) {
 					scoreboardCanvas.SetActive(false);
 
 					if (mapSlectionUI.done) {
+						mapSlectionUI.done = false;
 						mapSlectionUI.gameObject.SetActive (false);
 						scoreboardCanvas.SetActive(true);
 						selectingMap = false;
@@ -373,7 +386,6 @@ public class GameController : MonoBehaviour
 					return;
 				}
 
-				clearSpawnedObjects();
 				string timeText;
 				timeText = (int)((timer + 1) / 60) + ":" + (int)(((timer + 1) % 60) / 10) + (int)(((timer + 1) % 60) % 10);
 				scoreboard.updateScoreboardMessage(timeText);
@@ -493,12 +505,23 @@ public class GameController : MonoBehaviour
 
 	public void respawnPlayer()
 	{
-		player.resetHealthOfPlayer();
+		player.startingHealth += 20f;
+		player.resetEverything ();
+		playerUI.powerUpTimer = 0f;
 
 		// Position player at start
 		Vector3 tempPos = mapinfo.startLocation.transform.position;
 		tempPos.z = player.transform.position.z;
 		player.transform.position = tempPos;
+
+		/*
+		GameObject.Destroy (player.gameObject);
+		Transform newPlayerEnt = ((GameObject)Instantiate (playerEntPrefab, playerContainer)).transform;
+		player = newPlayerEnt.GetComponent<PlayerController> ();
+		playerSprites = player.gameObject.GetComponentsInChildren<SpriteRenderer>();
+		camera.setFollowing(player.gameObject);
+		*/
+
 		scores[currPlayer] -= 100;
 		scores[currCreator] += 100;
 	}

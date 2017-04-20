@@ -739,6 +739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5628229edcadb93419250db17933c361, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlayer: 0
   player: {fileID: 0}
   game: {fileID: 0}
 --- !u!114 &114000010927163728
@@ -873,6 +874,7 @@ MonoBehaviour:
   powerUpText: {fileID: 114000011022702668}
   powerUpImage: {fileID: 114000011090568710}
   healthBar: {fileID: 224000013024010754}
+  powerUpTimer: 0
 --- !u!114 &114000012261457112
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -899,7 +901,7 @@ MonoBehaviour:
   resistance: 1
   xAccel: 4
   maxSpeed: 25
-  jumpForce: 3700
+  jumpForce: 3600
   startingHealth: 100
   currentHealth: 0
   onLadder: 0

@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Landmine
-  description: Explodes!
+  description: Explodes when stepped on
   cost: 20
   canPlaceOnWalls: 1
   canPlaceInAir: 0

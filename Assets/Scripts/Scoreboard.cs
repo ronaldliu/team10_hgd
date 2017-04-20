@@ -66,24 +66,20 @@ public class Scoreboard : MonoBehaviour {
 		timerText.text = timer;
 		roundText.text = round;
 		//scores need to be flopped?
-		p1ScoreText.text = p2Score.ToString ();
-		p2ScoreText.text = p1Score.ToString ();
+		p1ScoreText.text = p1Score.ToString ();
+		p2ScoreText.text = p2Score.ToString ();
 		if (currPlayer == 0) {
 			p1Role.sprite = roles[0];
 			p2Role.sprite = roles[1];
-			p1Role.color = color1;
-			p2Role.color = color2;
-			p1ScoreText.color = color1;
-			p2ScoreText.color = color2;
 		} else {
 			p1Role.sprite = roles[1];
 			p2Role.sprite = roles[0];
-			p1Role.color = color2;
-			p2Role.color = color1;
-			p1ScoreText.color = color2;
-			p2ScoreText.color = color1;
 		}
 
+		p1Role.color = color1;
+		p2Role.color = color2;
+		p1ScoreText.color = color1;
+		p2ScoreText.color = color2;
 		infoText.text = info;
 	}
 

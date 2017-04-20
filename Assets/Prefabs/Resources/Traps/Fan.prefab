@@ -193,8 +193,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Fan
-  description: Really Blows
-  cost: 30
+  description: Really blows...
+  cost: 10
   canPlaceOnWalls: 1
   canPlaceInAir: 0
 --- !u!198 &198000011565728836
@@ -203,7 +203,7 @@ ParticleSystem:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010797418862}
-  serializedVersion: 2
+  serializedVersion: 4
   lengthInSec: 5
   startDelay:
     scalar: 0
@@ -241,12 +241,13 @@ ParticleSystem:
       m_RotationOrder: 4
     minMaxState: 0
   speed: 1
-  randomSeed: 800584749
   looping: 1
   prewarm: 0
   playOnAwake: 1
   moveWithTransform: 1
+  autoRandomSeed: 0
   scalingMode: 1
+  randomSeed: 800584768
   InitialModule:
     serializedVersion: 2
     enabled: 1

@@ -70,7 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Bear Trap
   description: Grabs things that step on it, holding them in place
-  cost: 60
+  cost: 20
   canPlaceOnWalls: 1
   canPlaceInAir: 0
 --- !u!114 &114000012440128448
@@ -86,7 +86,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shutSprite: {fileID: 21300000, guid: cdf2a5a42b17c7e49a715884897563f7, type: 3}
   secondHoldTime: 2
-  health: 40
+  health: 20
   destroyHealth: -50
 --- !u!212 &212000011138144776
 SpriteRenderer:
