@@ -107,8 +107,9 @@ public class CreatorController : MonoBehaviour {
 			
 		//Check if you can place this object right now
 		canPlace = (thisObj.canPlaceInAir || snappedEdge != null);
+
 		//Check if this object is being placed on another
-		if (currObjRenderer.GetComponent<Collider2D> ().IsTouchingLayers (LayerMask.GetMask ("Creator", "Enemies"))) {
+		if (currObjRenderer.GetComponent<CreatorObjRenderer>().colliding) {
 			canPlace = false;
 		}
 		//Check if a laser hits something

@@ -132,9 +132,13 @@ public class GameController : MonoBehaviour
 					startMusic = false;
 				}
 
-				if (!mapContainer)
-				{
-					generateMap();
+				if (!mapContainer) {
+					generateMap ();
+				} else {
+					//TODO bad hotfix (also in plaer state)
+					foreach(BoxCollider2D boxc in mapContainer.GetComponentsInChildren<BoxCollider2D>()) {
+						boxc.usedByEffector = false;
+					}
 				}
 				
 				string timeText;
@@ -247,6 +251,9 @@ public class GameController : MonoBehaviour
 							playerController.defaultColor = new Color(player2Color.r, player2Color.g, player2Color.b);
 							ob.color = new Color(player2Color.r, player2Color.g, player2Color.b);
 						}
+					}
+					foreach(BoxCollider2D boxc in mapContainer.GetComponentsInChildren<BoxCollider2D>()) {
+						boxc.usedByEffector = false;
 					}
 					roundStarted = true;
 				}
